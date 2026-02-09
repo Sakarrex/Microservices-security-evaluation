@@ -4,10 +4,6 @@
 # Usage: ./create.sh
 # Dependencies: mkcert, minikube, kubectl, docker, gnome-terminal
 
-
-minikube delete
-minikube start --nodes 3 --addons registry
-
 setCerts() {
     if [ ! -e ../certs/mydomain.com.pem ] || [ ! -e ../certs/mydomain.com-key.pem ]; then
         mkcert -install
@@ -19,7 +15,7 @@ setCerts() {
     kubectl rollout status deployment/ingress-nginx-controller -n ingress-nginx 
 }
 
- loadImages(){
+loadImages(){
     gnome-terminal -- kubectl port-forward -n kube-system service/registry 5000:80
     docker build -t localhost:5000/front ../Docker-Images/front/
     docker build -t localhost:5000/back ../Docker-Images/back/
@@ -27,8 +23,15 @@ setCerts() {
     docker push localhost:5000/back
 }
 
- applyBase(){
+applyBase(){
     kubectl apply -f ../Yamls/base-multinode.yaml
     kubectl rollout status deployment/back
     kubectl rollout status deployment/front
 }
+
+
+minikube delete
+minikube start --nodes 3 --addons registry
+setCerts()
+loadImages()
+applyBase()
