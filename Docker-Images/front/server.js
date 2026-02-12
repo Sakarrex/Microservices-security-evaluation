@@ -33,4 +33,3 @@ app.post("/api", express.json(), async (req, res) => {
     res.status(500).send("Error processing request");
   }
 });
-
