@@ -9,10 +9,8 @@ setCerts() {
         mkcert -install
         mkcert mydomain.com 
         mv mydomain.com.pem mydomain.com-key.pem ../certs/
+    fi
     kubectl -n kube-system create secret tls mkcert --key ../certs/mydomain.com-key.pem --cert ../certs/mydomain.com.pem
-    printf "kube-system/mkcert\n" | minikube addons configure ingress
-    minikube addons enable ingress
-    kubectl rollout status deployment/ingress-nginx-controller -n ingress-nginx 
 }
 
 loadImages(){
@@ -29,9 +27,16 @@ applyBase(){
     kubectl rollout status deployment/front
 }
 
+applyGateways(){
+    kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || \
+    kubectl apply --server-side -f ../Yamls/experimental-install.yaml
+    istioctl install --set profile=minimal --skip-confirmation 
+    kubectl apply -f ../Yamls/gateways.yaml
+}
 
 minikube delete
 minikube start --nodes 3 --addons registry
-setCerts()
-loadImages()
-applyBase()
+setCerts
+loadImages
+applyBase
+applyGateways

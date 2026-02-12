@@ -28,7 +28,7 @@ spec:
                     operator: DoesNotExist
       containers:
         - name: echo-server
-          image: front:latest    
+          image: localhost:5000/front    
           ports:
             - name: http
               containerPort: 3000
@@ -69,7 +69,7 @@ spec:
                     operator: DoesNotExist
       containers:
         - name: echo-server
-          image: back:latest    
+          image: localhost:5000/back    
           ports:
             - name: http
               containerPort: 3000
@@ -100,35 +100,3 @@ spec:
     - protocol: TCP
       port: 1500
       targetPort: 3000
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: ingress
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-spec:
-  tls:
-  - hosts:
-      - mydomain.com
-    secretName: my-tls-secret
-  ingressClassName: nginx
-  rules:
-    - host: mydomain.com
-      http:
-        paths:
-          - pathType: Prefix
-            path: /
-            backend:
-              service:
-                name: front-service
-                port:
-                  number: 1500
-          - pathType: Prefix
-            path: /api
-            backend:
-              service:
-                name: front-service
-                port:
-                  number: 1500
-          

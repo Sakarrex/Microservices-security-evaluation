@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "src", "index.html"));
 });
 
-app.post("/api", async (req, res) => {
+app.post("/api", express.json(), async (req, res) => {
   try {
     const response = await fetch(PROXY_API_URL, {
       method: "POST",
@@ -29,8 +29,8 @@ app.post("/api", async (req, res) => {
     const data = await response.json();
     res.json(data);
   } catch (err) {
-    console.error("Api error in /api:", err);
-    res.status(500).send("Error processing request", err);
+    console.error("Error en /api:", err);
+    res.status(500).send("Error processing request");
   }
 });
 
