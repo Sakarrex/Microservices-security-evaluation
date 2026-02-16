@@ -33,3 +33,7 @@ app.post("/api", express.json(), async (req, res) => {
     res.status(500).send("Error processing request");
   }
 });
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
