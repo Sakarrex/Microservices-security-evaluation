@@ -19,7 +19,6 @@ spec:
         app: front
     spec:
       affinity:
-        # Evita el nodo de control-plane
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
@@ -60,7 +59,6 @@ spec:
         app: back
     spec:
       affinity:
-        # Evita el nodo de control-plane
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:

@@ -70,14 +70,22 @@ connectTunnel(){
     echo "$INGRESS_HOST  mydomain.com" | sudo tee -a /etc/hosts
 }
 
+addmTLS(){
+    kubectl apply -f ../Yamls/mtls.yaml
+}
+
 setTelemetry(){
     kubectl apply -f "$ISTIO_HOME/samples/addons/prometheus.yaml"
     kubectl apply -f "$ISTIO_HOME/samples/addons/kiali.yaml"
     kubectl rollout status deployment/kiali -n istio-system
 }
 
+
+
 sudo -v
 minikube delete
+#CHECK
+#--memory=16384 --cpus=4
 minikube start --nodes 3 --addons registry
 setCerts
 loadImages
@@ -85,6 +93,7 @@ setIstio
 applyBase
 applyGateways
 connectTunnel
+addmTLS
 setTelemetry
 
 echo "Cluster setup complete. You can access the application at https://mydomain.com, or be redirected from http://mydomain.com"
