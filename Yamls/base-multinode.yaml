@@ -87,6 +87,7 @@ spec:
     - protocol: TCP
       port: 1500
       targetPort: 3000
+      name: tcp-back
 ---
 apiVersion: v1
 kind: Service
@@ -100,3 +101,4 @@ spec:
     - protocol: TCP
       port: 1500
       targetPort: 3000
+      name: tcp-front

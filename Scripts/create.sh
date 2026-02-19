@@ -4,20 +4,21 @@
 # Usage: ./create.sh
 # Dependencies: mkcert, minikube, kubectl, docker, gnome-terminal
 
-
+#CHANCE THIS ABSOLUTE ROUTE
+ISTIO_HOME="/home/micros/Desktop/istio-1.28.3" 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 setCerts() {
     Echo "Setting up TLS certificates..."
-    if [ ! -e "$SCRIPT_DIR/../certs/mydomain.com.pem" ] || [ ! -e "$SCRIPT_DIR/../certs/mydomain.com-key.pem" ]; then
+    if [ ! -e "$SCRIPT_DIR/../Certs/mydomain.com.pem" ] || [ ! -e "$SCRIPT_DIR/../Certs/mydomain.com-key.pem" ]; then
          mkcert -install
-    mkcert -cert-file "$SCRIPT_DIR/../certs/mydomain.com.pem" \
-           -key-file "$SCRIPT_DIR/../certs/mydomain.com-key.pem" \
+    mkcert -cert-file "$SCRIPT_DIR/../Certs/mydomain.com.pem" \
+           -key-file "$SCRIPT_DIR/../Certs/mydomain.com-key.pem" \
            mydomain.com
     fi
     kubectl -n default create secret tls secret-tls \
-        --key "$SCRIPT_DIR/../certs/mydomain.com-key.pem" \
-        --cert "$SCRIPT_DIR/../certs/mydomain.com.pem"
+        --key "$SCRIPT_DIR/../Certs/mydomain.com-key.pem" \
+        --cert "$SCRIPT_DIR/../Certs/mydomain.com.pem"
 }
 
 loadImages(){
@@ -37,11 +38,16 @@ applyBase(){
     kubectl rollout status deployment/front
 }
 
+setIstio(){
+    echo "Setting up Istio..."
+    istioctl install --set profile=default --set values.global.platform=minikube --skip-confirmation 
+    kubectl label namespace default istio-injection=enabled
+}
+
 applyGateways(){
-    echo "Setting up Istio and gateways..."
+    echo "Setting up Gateways..."
     kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || \
     kubectl apply --server-side -f "$SCRIPT_DIR/../Yamls/experimental-install.yaml"
-    istioctl install --set profile=minimal --skip-confirmation 
     kubectl apply -f "$SCRIPT_DIR/../Yamls/gateways.yaml"
 }
 
@@ -64,13 +70,21 @@ connectTunnel(){
     echo "$INGRESS_HOST  mydomain.com" | sudo tee -a /etc/hosts
 }
 
-sudo -v 
+setTelemetry(){
+    kubectl apply -f "$ISTIO_HOME/samples/addons/prometheus.yaml"
+    kubectl apply -f "$ISTIO_HOME/samples/addons/kiali.yaml"
+    kubectl rollout status deployment/kiali -n istio-system
+}
+
+sudo -v
 minikube delete
 minikube start --nodes 3 --addons registry
 setCerts
 loadImages
+setIstio
 applyBase
 applyGateways
 connectTunnel
+setTelemetry
 
 echo "Cluster setup complete. You can access the application at https://mydomain.com, or be redirected from http://mydomain.com"
