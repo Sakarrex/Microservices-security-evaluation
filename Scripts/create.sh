@@ -9,7 +9,7 @@ ISTIO_HOME="/home/micros/Desktop/istio-1.28.3"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 setCerts() {
-    Echo "Setting up TLS certificates..."
+    echo "Setting up TLS certificates..."
     if [ ! -e "$SCRIPT_DIR/../Certs/mydomain.com.pem" ] || [ ! -e "$SCRIPT_DIR/../Certs/mydomain.com-key.pem" ]; then
          mkcert -install
     mkcert -cert-file "$SCRIPT_DIR/../Certs/mydomain.com.pem" \
@@ -25,16 +25,16 @@ loadImages(){
     echo "Loading Docker images into minikube registry..."
     kubectl port-forward -n kube-system service/registry 5000:80 & PID=$!
     docker build -t localhost:5000/front "$SCRIPT_DIR/../Docker-Images/front/"
-    docker build -t localhost:5000/back "$SCRIPT_DIR/../Docker-Images/back/"
+    docker build -t localhost:5000/cpu-bench "$SCRIPT_DIR/../Docker-Images/cpu-bench/"
     docker push localhost:5000/front
-    docker push localhost:5000/back
+    docker push localhost:5000/cpu-bench
     kill $PID
 }
 
 applyBase(){
     echo "Applying app manifests..."
     kubectl apply -f "$SCRIPT_DIR/../Yamls/base-multinode.yaml"
-    kubectl rollout status deployment/back
+    kubectl rollout status deployment/cpu-bench
     kubectl rollout status deployment/front
 }
 
@@ -70,9 +70,9 @@ connectTunnel(){
     echo "$INGRESS_HOST  mydomain.com" | sudo tee -a /etc/hosts
 }
 
-addmTLS(){
+#addmTLS(){
     kubectl apply -f ../Yamls/mtls.yaml
-}
+#}
 
 setTelemetry(){
     kubectl apply -f "$ISTIO_HOME/samples/addons/prometheus.yaml"
@@ -93,7 +93,7 @@ setIstio
 applyBase
 applyGateways
 connectTunnel
-addmTLS
+#addmTLS
 setTelemetry
 
 echo "Cluster setup complete. You can access the application at https://mydomain.com, or be redirected from http://mydomain.com"

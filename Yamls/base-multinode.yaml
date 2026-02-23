@@ -42,7 +42,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: back
+  name: cpu-bench
 spec:
   replicas: 1
   strategy:
@@ -52,11 +52,11 @@ spec:
       maxSurge: 1              
   selector:
     matchLabels:
-      app: back
+      app: cpu-bench
   template:
     metadata:
       labels:
-        app: back
+        app: cpu-bench
     spec:
       affinity:
         nodeAffinity:
@@ -67,7 +67,7 @@ spec:
                     operator: DoesNotExist
       containers:
         - name: echo-server
-          image: localhost:5000/back
+          image: localhost:5000/cpu-bench
           ports:
             - name: http
               containerPort: 3000
@@ -90,10 +90,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: back-service
+  name: cpu-bench-service
 spec:
   selector:
-    app: back
+    app: cpu-bench
   type: ClusterIP
   ports:
     - protocol: TCP
