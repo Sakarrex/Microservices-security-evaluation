@@ -3,10 +3,9 @@ const path = require("path");
 const cors = require('cors');
 const PROXY_API_URL_CPU = "http://cpu-bench-service:1500";
 const PROXY_API_URL_MEM = "http://mem-bench-service:1500";
-
+const PORT = 3000;
 
 const app = express();
-const PORT = 3000;
 app.use(cors());
 
 app.use(express.json());
@@ -34,6 +33,19 @@ app.get("/mem", express.json(), async (req, res) => {
     res.json(data);
   } catch (err) {
     console.error("Error in /mem:", err);
+    res.status(500).send("Error processing request");
+  }
+})
+
+app.get("/run", express.json(), async (req, res) => {
+  try {
+    const responseMem = await fetch(PROXY_API_URL_MEM);
+    const responseCpu = await fetch(PROXY_API_URL_CPU);
+    const dataMem = await responseMem.json();
+    const dataCpu = await responseCpu.json();
+    res.json({ mem: dataMem, cpu: dataCpu });
+  } catch (err) {
+    console.error("Error in /run or /mem:", err);
     res.status(500).send("Error processing request");
   }
 })

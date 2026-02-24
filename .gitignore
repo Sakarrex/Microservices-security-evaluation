@@ -1,4 +1,6 @@
-Docker-Images/back/node_modules
+Docker-Images/cpu-bench/node_modules
 Docker-Images/front/node_modules
+Docker-Images/mem-bench/node_modules
 Certs/mydomain.com-key.pem
 Certs/mydomain.com.pem
+.vscode

@@ -8,7 +8,6 @@ const PORT = 3000;
 app.use(cors());
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "src")));
 
 function multiply(matrix1, matrix2, N) {
   let result = new Array(N).fill(0).map(() => new Array(N).fill(0));
