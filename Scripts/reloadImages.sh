@@ -10,6 +10,9 @@ docker push localhost:5000/front
 docker push localhost:5000/cpu-bench
 docker push localhost:5000/mem-bench
 kill $PID
-kubectl rollout restart deployment/front -n default
-kubectl rollout restart deployment/cpu-bench -n default
-kubectl rollout restart deployment/mem-bench -n default
+kubectl rollout restart deployment/front
+kubectl rollout restart deployment/cpu-bench
+kubectl rollout restart deployment/mem-bench 
+kubectl rollout status deployment/cpu-bench
+kubectl rollout status deployment/mem-bench
+kubectl rollout status deployment/front

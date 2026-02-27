@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mem-bench
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mem-bench
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1        
+      maxSurge: 1              
+  selector:
+    matchLabels:
+      app: mem-bench
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: mem-bench
+        version: v1
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
+      containers:
+        - name: mem-bench
+          image: localhost:5000/mem-bench
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+      terminationGracePeriodSeconds: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mem-bench-service
+  labels:
+    app: mem-bench
+    service: mem-bench
+spec:
+  selector:
+    app: mem-bench
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      name: http-mem
+

@@ -35,7 +35,9 @@ loadImages(){
 
 applyBase(){
     echo "Applying app manifests..."
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/base-multinode.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/front-app.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/cpu-bench-app.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/mem-bench-app.yaml"
     kubectl rollout status deployment/cpu-bench
     kubectl rollout status deployment/mem-bench
     kubectl rollout status deployment/front
@@ -73,9 +75,13 @@ connectTunnel(){
     echo "$INGRESS_HOST  mydomain.com" | sudo tee -a /etc/hosts
 }
 
-#addmTLS(){
-    kubectl apply -f ../Yamls/mtls.yaml
-#}
+addmTLS(){
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/mtls.yaml"
+}
+
+addJwt(){
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/jwt-all.yaml"
+}
 
 setTelemetry(){
     kubectl apply -f "$ISTIO_HOME/samples/addons/prometheus.yaml"
@@ -96,7 +102,8 @@ setIstio
 applyBase
 applyGateways
 connectTunnel
-#addmTLS
+addmTLS
+#addJwt
 setTelemetry
 
 echo "Cluster setup complete. You can access the application at https://mydomain.com, or be redirected from http://mydomain.com"

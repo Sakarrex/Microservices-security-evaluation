@@ -9,8 +9,13 @@ const filePath = './program';
 app.use(cors());
 
 app.use(express.json());
+app.use((req, _res, next) => {
+  req.token = req.headers.authorization;
+  next();
+});
 
 app.get("/", express.json(), (req, res) => {
+    console.log(req.headers);
     exec(`"${filePath}"`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error opening .exe file: ${error}`);
