@@ -1,0 +1,18 @@
+apiVersion: extensions.istio.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  name: coraza-waf
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: app-gateway
+  url: oci://ghcr.io/corazawaf/coraza-proxy-wasm:latest
+  imagePullPolicy: IfNotPresent
+  phase: AUTHN
+  pluginConfig:
+    rules: |
+      Include @recommended-conf
+      SecRuleEngine On
+      Include @crs-setup-conf
+      Include @owasp_crs/*.conf

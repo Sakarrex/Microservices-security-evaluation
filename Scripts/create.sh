@@ -80,7 +80,11 @@ addmTLS(){
 }
 
 addJwt(){
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/jwt-all.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/Jwt/jwt-all.yaml"
+}
+
+addWaf(){
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/Waf/waf-all.yaml"
 }
 
 setTelemetry(){
@@ -103,6 +107,7 @@ applyBase
 applyGateways
 connectTunnel
 addmTLS
+addWaf
 #addJwt
 setTelemetry
 

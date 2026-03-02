@@ -1,0 +1,56 @@
+apiVersion: extensions.istio.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  name: coraza-waf-front
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: front
+  url: oci://ghcr.io/corazawaf/coraza-proxy-wasm:latest
+  imagePullPolicy: IfNotPresent
+  phase: AUTHN
+  pluginConfig:
+    rules: |
+      Include @recommended-conf
+      SecRuleEngine On
+      Include @crs-setup-conf
+      Include @owasp_crs/*.conf
+---
+apiVersion: extensions.istio.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  name: coraza-waf-cpu-bench
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: cpu-bench
+  url: oci://ghcr.io/corazawaf/coraza-proxy-wasm:latest
+  imagePullPolicy: IfNotPresent
+  phase: AUTHN
+  pluginConfig:
+    rules: |
+      Include @recommended-conf
+      SecRuleEngine On
+      Include @crs-setup-conf
+      Include @owasp_crs/*.conf
+---
+apiVersion: extensions.istio.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  name: coraza-waf-mem-bench
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: mem-bench
+  url: oci://ghcr.io/corazawaf/coraza-proxy-wasm:latest
+  imagePullPolicy: IfNotPresent
+  phase: AUTHN
+  pluginConfig:
+    rules: |
+      Include @recommended-conf
+      SecRuleEngine On
+      Include @crs-setup-conf
+      Include @owasp_crs/*.conf
