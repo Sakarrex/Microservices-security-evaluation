@@ -4,8 +4,6 @@
 # Usage: ./create.sh
 # Dependencies: mkcert, minikube, kubectl, docker, istioctl
 
-#CHANGE THIS ABSOLUTE ROUTE
-ISTIO_HOME="/home/micros/Desktop/istio-1.28.3" 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 setCerts() {
@@ -45,7 +43,8 @@ applyBase(){
 
 setIstio(){
     echo "Setting up Istio..."
-    istioctl install --set profile=default --set values.global.platform=minikube --skip-confirmation 
+    #Minimal to avoid adding the ingress it comes by default
+    istioctl install --set profile=minimal --set values.global.platform=minikube --skip-confirmation 
     kubectl label namespace default istio-injection=enabled
 }
 
@@ -88,8 +87,8 @@ addWaf(){
 }
 
 setTelemetry(){
-    kubectl apply -f "$ISTIO_HOME/samples/addons/prometheus.yaml"
-    kubectl apply -f "$ISTIO_HOME/samples/addons/kiali.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/prometheus.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/kiali.yaml"
     kubectl rollout status deployment/kiali -n istio-system
 }
 
@@ -108,7 +107,7 @@ applyGateways
 connectTunnel
 addmTLS
 addWaf
-#addJwt
+addJwt
 setTelemetry
 
 echo "Cluster setup complete. You can access the application at https://mydomain.com, or be redirected from http://mydomain.com"

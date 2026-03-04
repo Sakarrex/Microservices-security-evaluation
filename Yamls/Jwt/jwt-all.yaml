@@ -29,4 +29,4 @@ spec:
   rules:
   - from:
     - source:
-        requestPrincipals: ["testing@secure.istio.io/testing@secure.istio.io"]
+        requestPrincipals: ["testing@secure.istio.io/testing@secure.istio.io","cluster.local/ns/istio-system/sa/prometheus"]

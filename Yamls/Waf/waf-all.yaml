@@ -10,6 +10,6 @@ spec:
   pluginConfig:
     rules: |
       Include @recommended-conf
-      SecRuleEngine On
+      SecRuleEngine DetectionOnly
       Include @crs-setup-conf
       Include @owasp_crs/*.conf
