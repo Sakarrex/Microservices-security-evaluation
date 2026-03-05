@@ -87,7 +87,7 @@ addWaf(){
 }
 
 setTelemetry(){
-    #kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/prometheus.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/prometheus.yaml"
     kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/kiali.yaml"
     kubectl rollout status deployment/kiali -n istio-system
 }
@@ -105,9 +105,9 @@ setIstio
 applyBase
 applyGateways
 connectTunnel
-#addmTLS
-#addWaf
-#addJwt
+addmTLS
+addWaf
+addJwt
 setTelemetry
 
 echo "Cluster setup complete. You can access the application at https://mydomain.com, or be redirected from http://mydomain.com"
