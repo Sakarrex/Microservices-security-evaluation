@@ -33,9 +33,9 @@ loadImages(){
 
 applyBase(){
     echo "Applying app manifests..."
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/front-app.yaml"
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/cpu-bench-app.yaml"
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/mem-bench-app.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/Apps/front-app.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/Apps/cpu-bench-app.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/Apps/mem-bench-app.yaml"
     kubectl rollout status deployment/cpu-bench
     kubectl rollout status deployment/mem-bench
     kubectl rollout status deployment/front
@@ -51,8 +51,8 @@ setIstio(){
 applyGateways(){
     echo "Setting up Gateways..."
     kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || \
-    kubectl apply --server-side -f "$SCRIPT_DIR/../Yamls/experimental-install.yaml"
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/gateways.yaml"
+    kubectl apply --server-side -f "$SCRIPT_DIR/../Yamls/Apps/experimental-install.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/Apps/gateways.yaml"
 }
 
 connectTunnel(){
@@ -75,7 +75,7 @@ connectTunnel(){
 }
 
 addmTLS(){
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/mtls.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/Mtls/mtls.yaml"
 }
 
 addJwt(){
@@ -87,7 +87,7 @@ addWaf(){
 }
 
 setTelemetry(){
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/prometheus.yaml"
+    #kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/prometheus.yaml"
     kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/kiali.yaml"
     kubectl rollout status deployment/kiali -n istio-system
 }
@@ -105,9 +105,9 @@ setIstio
 applyBase
 applyGateways
 connectTunnel
-addmTLS
-addWaf
-addJwt
+#addmTLS
+#addWaf
+#addJwt
 setTelemetry
 
 echo "Cluster setup complete. You can access the application at https://mydomain.com, or be redirected from http://mydomain.com"

@@ -1,0 +1,35 @@
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: front-mtls
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: front
+  mtls:
+    mode: DISABLE
+---
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: cpu-bench-mtls
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: cpu-bench
+  mtls:
+    mode: DISABLE
+---
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: mem-bench-mtls
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: mem-bench
+  mtls:
+    mode: DISABLE
