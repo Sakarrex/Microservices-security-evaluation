@@ -56,7 +56,7 @@ applyGateways(){
 }
 
 connectTunnel(){
-    minikube tunnel & PID=$!
+    minikube tunnel & PID_TUNNEL=$!
 
     echo "Waiting for gateway IP..."
     local INGRESS_HOST=""
@@ -75,7 +75,7 @@ connectTunnel(){
 }
 
 addmTLS(){
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/Mtls/mtls.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/Mtls/enable-mtls-all.yaml"
 }
 
 addJwt(){
@@ -88,6 +88,7 @@ addWaf(){
 
 setTelemetry(){
     kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/prometheus.yaml"
+    kubectl port-forward svc/prometheus -n istio-system 9090:9090 & PID_PROMETHEUS=$!
     kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/kiali.yaml"
     kubectl rollout status deployment/kiali -n istio-system
 }
