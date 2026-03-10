@@ -24,7 +24,7 @@ function multiply(matrix1, matrix2, N) {
 }
 
 app.get("/", express.json(), (req, res) => {
-  let N =  10 + Math.floor(Math.random() * 90);
+  let N =  1000; // Size of the matrices
   let matrix1 = new Array(N).fill(0).map(() => new Array(N).fill(0).map(() => Math.floor(Math.random() * 10)));
   let matrix2 = new Array(N).fill(0).map(() => new Array(N).fill(0).map(() => Math.floor(Math.random() * 10)));
   let result = multiply(matrix1, matrix2, N);
