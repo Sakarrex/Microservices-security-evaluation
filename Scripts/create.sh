@@ -52,7 +52,7 @@ applyGateways(){
     echo "Setting up Gateways..."
     kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || \
     kubectl apply --server-side -f "$SCRIPT_DIR/../Yamls/Apps/experimental-install.yaml"
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/Apps/gateways.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/Apps/gateway-http.yaml"
 }
 
 connectTunnel(){
@@ -91,7 +91,7 @@ setTelemetry(){
     kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/prometheus.yaml"
     kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/kiali.yaml"
     kubectl rollout status deployment/prometheus -n istio-system
-    kubectl port-forward svc/prometheus -n istio-system 9090:9090 & PID_PROMETHEUS=$!
+    kubectl port-forward svc/prometheus -n istio-system 9090:9090 > /dev/null 2>&1 & PID_PROMETHEUS=$! 
     kubectl rollout status deployment/kiali -n istio-system
 }
 
@@ -108,9 +108,9 @@ setIstio
 applyBase
 applyGateways
 connectTunnel
-addmTLS
-addWaf
-addJwt
+#addmTLS
+#addWaf
+#addJwt
 setTelemetry
 
-echo "Cluster setup complete. You can access the application at https://mydomain.com, or be redirected from http://mydomain.com"
+echo "Cluster setup complete. You can access the application at http://mydomain.com"
