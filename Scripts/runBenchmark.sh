@@ -31,19 +31,37 @@ echo "Starting benchmark run..."
 getResults Control "" http
 
 #Benchmark Mtls and https gateway only
-echo "Starting benchmark run for Mtls and https gateway only..."
+echo "Starting benchmark run for Https and Mtls gateway only..."
 
 kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-gateway.yaml
 kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/disable-mtls-apps.yaml
 kubectl apply -f $SCRIPT_DIR/../Yamls/Apps/gateway-https.yaml
-kubectl rollout status deployment/app-gateway-istio
 getResults Mtls Gateway https
 kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-gateway.yaml
 kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/disable-mtls-apps.yaml
 kubectl apply -f $SCRIPT_DIR/../Yamls/Apps/gateway-http.yaml
-kubectl rollout status deployment/app-gateway-istio
 
 #echo "Starting benchmark run for Mtl sidercars only..."
-#kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/sidecar.yaml
+echo "Starting benchmark run for Mtls in sidecars only..."
 
-#Benchmark Mtls in sidecars only
+kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-apps.yaml
+kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/disable-mtls-gateway.yaml
+getResults Mtls Sidecar http
+kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-apps.yaml
+kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/disable-mtls-gateway.yaml
+
+#Benchmark Mtls in all 
+echo "Starting benchmark run for Https and Mtls in sidecars and gateway..."
+kubectl apply -f $SCRIPT_DIR/../Yamls/Apps/gateway-https.yaml
+kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/disable-mtls-all.yaml
+kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-all.yaml
+getResults Mtls All https
+kubectl apply -f $SCRIPT_DIR/../Yamls/Apps/gateway-http.yaml
+kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-all.yaml
+kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/disable-mtls-all.yaml
+
+#Benchmark Jwt gateway only
+#echo "Starting benchmark run for Jwt in gateway only..."
+#kubectl apply -f $SCRIPT_DIR/../Yamls/Jwt/jwt-gateway.yaml
+#getResults Jwt Gateway http
+#kubectl delete -f $SCRIPT_DIR/../Yamls/Jwt/jwt-gateway.yaml
