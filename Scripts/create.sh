@@ -95,9 +95,6 @@ setTelemetry(){
     kubectl rollout status deployment/kiali -n istio-system
 }
 
-disablemTLS(){
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/Mtls/disable-mtls-all.yaml"
-}
 
 
 sudo -v
@@ -111,7 +108,6 @@ setIstio
 applyBase
 applyGateways
 connectTunnel
-disablemTLS
 #addmTLS
 #addWaf
 #addJwt

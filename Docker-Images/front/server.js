@@ -13,7 +13,6 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "src")));
 app.use((req, _res, next) => {
   req.token = req.headers.authorization;
-  console.log("Received request with token:", req.token);
   next();
 });
 
