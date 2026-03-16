@@ -5,7 +5,7 @@
 int main() {
     srand(time(0));
     const int iterations = 100000;
-    int size = 100; // Fixed size for each allocation
+    int size = 10000; // Fixed size for each allocation
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < iterations; i++) {
         int* block = (int*)malloc(size * sizeof(int));

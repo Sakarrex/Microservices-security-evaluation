@@ -100,8 +100,8 @@ setTelemetry(){
 sudo -v
 minikube delete
 #CHECK
-#--memory=16384 --cpus=4
-minikube start --nodes 3 --addons registry
+#--memory=16384 
+minikube start --cpus 4 --nodes 3 --addons registry
 setCerts
 loadImages
 setIstio
