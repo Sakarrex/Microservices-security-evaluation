@@ -8,7 +8,7 @@ kind: Deployment
 metadata:
   name: mem-bench
 spec:
-  replicas: 1
+  replicas: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:

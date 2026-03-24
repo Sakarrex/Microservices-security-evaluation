@@ -8,7 +8,7 @@ kind: Deployment
 metadata:
   name: cpu-bench
 spec:
-  replicas: 1
+  replicas: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -19,7 +19,7 @@ spec:
       app: cpu-bench
       version: v1
   template:
-    metadata:
+    metadata: 
       labels:
         app: cpu-bench
         version: v1

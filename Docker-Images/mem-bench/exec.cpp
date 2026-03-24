@@ -1,20 +1,26 @@
-#include<iostream>
-#include<chrono>
-#include<cstdlib>
+#include <iostream>
+#include <chrono>
+#include <cstdlib>
+#include <cstring>
 
 int main() {
-    srand(time(0));
-    const int iterations = 100000;
-    int size = 10000; // Fixed size for each allocation
+    const int iterations = 1000;
+    const int size = 10000;
+    // Accumulate allocations — don't free until end
+    int** blocks = (int**)malloc(iterations * sizeof(int*));
+    
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < iterations; i++) {
-        int* block = (int*)malloc(size * sizeof(int));
-        block[0] = i;
-        free(block);
+        blocks[i] = (int*)malloc(size * sizeof(int));
+        memset(blocks[i], i & 0xFF, size * sizeof(int)); // force actual page faults
     }
-
     auto end = std::chrono::high_resolution_clock::now();
+    
+    
+    for (int i = 0; i < iterations; i++) free(blocks[i]);
+    free(blocks);
+    
     double ms = std::chrono::duration<double, std::milli>(end - start).count();
     std::cout << "Done in " << ms << "ms\n";
-    std::cout << "Avg per alloc/free: " << (ms * 1e6 / iterations) << "ns\n";
+    std::cout << "Peak alloc: ~" << (iterations * size * sizeof(int) / 1024 / 1024) << "MB\n";
 }

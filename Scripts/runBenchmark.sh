@@ -8,30 +8,45 @@ function getResults() {
     COMPONENT=$2
     HTTP=$3
     RUN_NUMBER=$4
-    autocannon -c 100 -a 10000 -H "Authorization: Bearer $TOKEN" -j $HTTP://mydomain.com/run  > $SCRIPT_DIR/../Results/$PROTOCOL/$COMPONENT/Run_$RUN_NUMBER/http_results.json 2>&1
-    DURATION=$(jq -r '.duration' "$SCRIPT_DIR/../Results/$PROTOCOL/$COMPONENT/Run_$RUN_NUMBER/http_results.json" 2>/dev/null)
+
+    BASE_ROUTE="$SCRIPT_DIR/../Results/$PROTOCOL/Run_$RUN_NUMBER/$COMPONENT"
+
+    autocannon -c 100 -a 10000 -H "Authorization: Bearer $TOKEN" -j $HTTP://mydomain.com/run  > $BASE_ROUTE/http_results.json 2>&1
+    DURATION=$(jq -r '.duration' "$BASE_ROUTE/http_results.json" 2>/dev/null)
     DURATION=$(printf "%.0f" "$DURATION")
     echo "Benchmark of $PROTOCOL:$COMPONENT running for approximately $DURATION seconds"
 
-    #CPU usages
-    CPU_USAGE_DATA_PLANE_PODS=$(curl --data-urlencode "query=rate(container_cpu_usage_seconds_total{pod=~\"istiod.*\"}[${DURATION}s])" http://localhost:9090/api/v1/query > $SCRIPT_DIR/../Results/$PROTOCOL/$COMPONENT/Run_$RUN_NUMBER/Cpu/data_plane_cpu_results.json -s)
-    CPU_USAGE_APP_PODS=$(curl --data-urlencode "query=rate(container_cpu_usage_seconds_total{pod=~\"cpu-bench.*|mem-bench.*|front.*\"}[${DURATION}s])" http://localhost:9090/api/v1/query > $SCRIPT_DIR/../Results/$PROTOCOL/$COMPONENT/Run_$RUN_NUMBER/Cpu/app_cpu_results.json -s)
-    CPU_USAGE_GATEWAY_PODS=$(curl --data-urlencode "query=rate(container_cpu_usage_seconds_total{pod=~\"app-gateway.*\"}[${DURATION}s])" http://localhost:9090/api/v1/query > $SCRIPT_DIR/../Results/$PROTOCOL/$COMPONENT/Run_$RUN_NUMBER/Cpu/gateway_cpu_results.json -s)
 
-    CPU_USAGE_NODES=$(curl --data-urlencode "query=sum by(instance) (rate(container_cpu_usage_seconds_total{pod=~\"istiod.*|cpu-bench.*|mem-bench.*|front.*|app-gateway.*\"}[100m]))" http://localhost:9090/api/v1/query > $SCRIPT_DIR/../Results/$PROTOCOL/$COMPONENT/Run_$RUN_NUMBER/Cpu/nodes_cpu_results.json -s)
+    #CPU usages
+    #CONTROL_PLANE
+    curl --data-urlencode "query=rate(container_cpu_usage_seconds_total{pod=~\"istiod.*\"}[${DURATION}s])" http://localhost:9090/api/v1/query > $BASE_ROUTE/Cpu/data_plane_cpu_results.json -s
+    #APPS
+    curl --data-urlencode "query=rate(container_cpu_usage_seconds_total{pod=~\"cpu-bench.*|mem-bench.*|front.*\"}[${DURATION}s])" http://localhost:9090/api/v1/query > $BASE_ROUTE/Cpu/app_cpu_results.json -s
+    #GATEWAY
+    curl --data-urlencode "query=rate(container_cpu_usage_seconds_total{pod=~\"app-gateway.*\"}[${DURATION}s])" http://localhost:9090/api/v1/query > $BASE_ROUTE/Cpu/gateway_cpu_results.json -s
+    #TOTAL
+    curl --data-urlencode "query=sum(rate(container_cpu_usage_seconds_total{pod=~\"istiod.*|cpu-bench.*|mem-bench.*|front.*|app-gateway.*\"}[${DURATION}s]))" http://localhost:9090/api/v1/query > $BASE_ROUTE/Cpu/total_cpu_results.json -s
 
     #Memory usages
-    MEM_USAGE_DATA_PLANE_PODS=$(curl --data-urlencode "query=avg(avg_over_time(container_memory_usage_bytes{pod=~\"istiod.*\"}[${DURATION}s]))" http://localhost:9090/api/v1/query > $SCRIPT_DIR/../Results/$PROTOCOL/$COMPONENT/Run_$RUN_NUMBER/Mem/data_plane_mem_results.json -s)
-    MEM_USAGE_APP_PODS=$(curl --data-urlencode "query=avg(avg_over_time(container_memory_usage_bytes{pod=~\"cpu-bench.*|mem-bench.*|front.*\"}[${DURATION}s]))" http://localhost:9090/api/v1/query > $SCRIPT_DIR/../Results/$PROTOCOL/$COMPONENT/Run_$RUN_NUMBER/Mem/app_mem_results.json -s)
-    MEM_USAGE_GATEWAY_PODS=$(curl --data-urlencode "query=avg(avg_over_time(container_memory_usage_bytes{pod=~\"app-gateway.*\"}[${DURATION}s]))" http://localhost:9090/api/v1/query > $SCRIPT_DIR/../Results/$PROTOCOL/$COMPONENT/Run_$RUN_NUMBER/Mem/gateway_mem_results.json -s)
+    #CONTROL_PLANE
+    curl --data-urlencode "query=avg(avg_over_time(container_memory_working_set_bytes{pod=~\"istiod.*\"}[${DURATION}s]))" http://localhost:9090/api/v1/query > $BASE_ROUTE/Mem/data_plane_mem_results.json -s
+    #APPS
+    curl --data-urlencode "query=avg(avg_over_time(container_memory_working_set_bytes{pod=~\"cpu-bench.*|mem-bench.*|front.*\"}[${DURATION}s]))" http://localhost:9090/api/v1/query > $BASE_ROUTE/Mem/app_mem_results.json -s
+    #GATEWAY
+    curl --data-urlencode "query=avg(avg_over_time(container_memory_working_set_bytes{pod=~\"app-gateway.*\"}[${DURATION}s]))" http://localhost:9090/api/v1/query > $BASE_ROUTE/Mem/gateway_mem_results.json -s
+    #TOTAL
+    curl --data-urlencode "query=sum(avg(avg_over_time(container_memory_working_set_bytes{pod=~\"app-gateway.*|cpu-bench.*|mem-bench.*|front.*|istiod.*\"}[${DURATION}s])))" http://localhost:9090/api/v1/query > $BASE_ROUTE/Mem/total_mem_results.json -s
+
+    #curl --data-urlencode "query=max_over_time(container_memory_working_set_bytes{pod=~\"mem-bench.*|cpu-bench.*|front.*|app-gateway.*\"}[${DURATION}s])" http://localhost:9090/api/v1/query > mem-res.json -s
+
+    #curl --data-urlencode "query=node_memory_MemAvailable_bytes{node=\"minikube-m03\"}" http://localhost:9090/api/v1/query > node-mem-res.json -s
 }
 
 createFolders() {
-
     mkdir -p $SCRIPT_DIR/../Results/Control/Run_$1/Cpu/ $SCRIPT_DIR/../Results/Control/Run_$1/Mem/ > /dev/null
-    mkdir -p $SCRIPT_DIR/../Results/Mtls/Gateway/Run_$1/Cpu/ $SCRIPT_DIR/../Results/Mtls/Gateway/Run_$1/Mem/ $SCRIPT_DIR/../Results/Mtls/Sidecar/Run_$1/Cpu/ $SCRIPT_DIR/../Results/Mtls/Sidecar/Run_$1/Mem/ $SCRIPT_DIR/../Results/Mtls/All/Run_$1/Cpu/ $SCRIPT_DIR/../Results/Mtls/All/Run_$1/Mem/ > /dev/null
-    mkdir -p $SCRIPT_DIR/../Results/Jwt/Gateway/Run_$1/Cpu/ $SCRIPT_DIR/../Results/Jwt/Gateway/Run_$1/Mem/ $SCRIPT_DIR/../Results/Jwt/Sidecar/Run_$1/Cpu/ $SCRIPT_DIR/../Results/Jwt/Sidecar/Run_$1/Mem/ $SCRIPT_DIR/../Results/Jwt/All/Run_$1/Cpu/ $SCRIPT_DIR/../Results/Jwt/All/Run_$1/Mem/ > /dev/null
-    mkdir -p $SCRIPT_DIR/../Results/Waf/Gateway/Run_$1/Cpu/ $SCRIPT_DIR/../Results/Waf/Gateway/Run_$1/Mem/ $SCRIPT_DIR/../Results/Waf/Sidecar/Run_$1/Cpu/ $SCRIPT_DIR/../Results/Waf/Sidecar/Run_$1/Mem/ $SCRIPT_DIR/../Results/Waf/All/Run_$1/Cpu/ $SCRIPT_DIR/../Results/Waf/All/Run_$1/Mem/ > /dev/null
+    mkdir -p $SCRIPT_DIR/../Results/Mtls/Run_$1/Gateway/Cpu/ $SCRIPT_DIR/../Results/Mtls/Run_$1/Gateway/Mem/ $SCRIPT_DIR/../Results/Mtls/Run_$1/Sidecar/Cpu/ $SCRIPT_DIR/../Results/Mtls/Run_$1/Sidecar/Mem/ $SCRIPT_DIR/../Results/Mtls/Run_$1/All/Cpu/ $SCRIPT_DIR/../Results/Mtls/Run_$1/All/Mem/ > /dev/null
+    mkdir -p $SCRIPT_DIR/../Results/Jwt/Run_$1/Gateway/Cpu/ $SCRIPT_DIR/../Results/Jwt/Run_$1/Gateway/Mem/ $SCRIPT_DIR/../Results/Jwt/Run_$1/Sidecar/Cpu/ $SCRIPT_DIR/../Results/Jwt/Run_$1/Sidecar/Mem/ $SCRIPT_DIR/../Results/Jwt/Run_$1/All/Cpu/ $SCRIPT_DIR/../Results/Jwt/Run_$1/All/Mem/ > /dev/null
+    mkdir -p $SCRIPT_DIR/../Results/Waf/Run_$1/Gateway/Cpu/ $SCRIPT_DIR/../Results/Waf/Run_$1/Gateway/Mem/ $SCRIPT_DIR/../Results/Waf/Run_$1/Sidecar/Cpu/ $SCRIPT_DIR/../Results/Waf/Run_$1/Sidecar/Mem/ $SCRIPT_DIR/../Results/Waf/Run_$1/All/Cpu/ $SCRIPT_DIR/../Results/Waf/Run_$1/All/Mem/ > /dev/null
 }
 
 i=1
@@ -44,14 +59,16 @@ kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/disable-mtls-all.yaml
 
 #Benchmark Control
 echo "Starting benchmark run..."
-
+sleep 30
 getResults Control "" http $i
+
 
 
 #Benchmark Jwt gateway only
 echo "Starting benchmark run for Jwt in gateway only..."
 
 kubectl apply -f $SCRIPT_DIR/../Yamls/Jwt/jwt-gateway.yaml
+sleep 30
 getResults Jwt Gateway http $i
 kubectl delete -f $SCRIPT_DIR/../Yamls/Jwt/jwt-gateway.yaml
 
@@ -59,6 +76,7 @@ kubectl delete -f $SCRIPT_DIR/../Yamls/Jwt/jwt-gateway.yaml
 echo "Starting benchmark run for Jwt in sidecar only..."
 
 kubectl apply -f $SCRIPT_DIR/../Yamls/Jwt/jwt-apps.yaml
+sleep 30
 getResults Jwt Sidecar http $i
 kubectl delete -f $SCRIPT_DIR/../Yamls/Jwt/jwt-apps.yaml
 
@@ -66,6 +84,7 @@ kubectl delete -f $SCRIPT_DIR/../Yamls/Jwt/jwt-apps.yaml
 echo "Starting benchmark run for Jwt in sidecars and gateway..."
 
 kubectl apply -f $SCRIPT_DIR/../Yamls/Jwt/jwt-all.yaml
+sleep 30
 getResults Jwt All http $i
 kubectl delete -f $SCRIPT_DIR/../Yamls/Jwt/jwt-all.yaml
 
@@ -73,6 +92,7 @@ kubectl delete -f $SCRIPT_DIR/../Yamls/Jwt/jwt-all.yaml
 echo "Starting benchmark run for Waf in gateway only..."
 
 kubectl apply -f $SCRIPT_DIR/../Yamls/Waf/waf-gateway.yaml
+sleep 30
 getResults Waf Gateway http $i
 kubectl delete -f $SCRIPT_DIR/../Yamls/Waf/waf-gateway.yaml
 
@@ -80,6 +100,7 @@ kubectl delete -f $SCRIPT_DIR/../Yamls/Waf/waf-gateway.yaml
 echo "Starting benchmark run for Waf in sidecar only..."
 
 kubectl apply -f $SCRIPT_DIR/../Yamls/Waf/waf-apps.yaml
+sleep 30
 getResults Waf Sidecar http $i
 kubectl delete -f $SCRIPT_DIR/../Yamls/Waf/waf-apps.yaml
 
@@ -87,16 +108,17 @@ kubectl delete -f $SCRIPT_DIR/../Yamls/Waf/waf-apps.yaml
 echo "Starting benchmark run for Waf in sidecars and gateway..."
 
 kubectl apply -f $SCRIPT_DIR/../Yamls/Waf/waf-all.yaml
+sleep 30
 getResults Waf All http $i
 kubectl delete -f $SCRIPT_DIR/../Yamls/Waf/waf-all.yaml
 
 #Enable Mtls back
 kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/disable-mtls-all.yaml
 
-#echo "Starting benchmark run for Mtl sidercars only..."
-echo "Starting benchmark run for Mtls in sidecars and gateway only..."
+echo "Starting benchmark run for Mtls in sidecars and gateway "
 
 kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-all.yaml
+sleep 30
 getResults Mtls Sidecar http $i
 kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-all.yaml
 
@@ -108,13 +130,15 @@ kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/disable-mtls-all.yaml
 kubectl apply -f $SCRIPT_DIR/../Yamls/Apps/gateway-https.yaml
 kubectl rollout restart deployment app-gateway-istio -n default
 kubectl rollout status deployment app-gateway-istio -n default
+sleep 30
 getResults Mtls Gateway https $i
 kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/disable-mtls-all.yaml
 
-#Benchmark Mtls in all 
+#Benchmark Mtls in all
 echo "Starting benchmark run for Https and Mtls in sidecars and gateway..."
 
-kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-all.yaml
+kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-all.yaml
+sleep 30
 getResults Mtls All https $i
 kubectl apply -f $SCRIPT_DIR/../Yamls/Apps/gateway-http.yaml
 kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-all.yaml

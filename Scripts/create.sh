@@ -87,12 +87,12 @@ addWaf(){
 }
 
 setTelemetry(){
-    echo "Setting up telemetry with Prometheus and Kiali..."
+    echo "Setting up telemetry"
     kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/prometheus.yaml"
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/kiali.yaml"
+    #kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/kiali.yaml"
     kubectl rollout status deployment/prometheus -n istio-system
     kubectl port-forward svc/prometheus -n istio-system 9090:9090 > /dev/null 2>&1 & PID_PROMETHEUS=$! 
-    kubectl rollout status deployment/kiali -n istio-system
+    #kubectl rollout status deployment/kiali -n istio-system
 }
 
 
@@ -101,7 +101,7 @@ sudo -v
 minikube delete
 #CHECK
 #--memory=16384 
-minikube start --cpus 4 --nodes 3 --addons registry
+minikube start --cpus 4 --nodes 3 --memory=3584 --addons registry
 setCerts
 loadImages
 setIstio
