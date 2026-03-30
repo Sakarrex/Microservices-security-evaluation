@@ -6,7 +6,7 @@ The main objective of the this application is the deployment of a Kubernetes clu
 ## Requirements 
 * Ubuntu
 * Docker
-* Kubernetes flavor (Minikube was used for this project)
+* Kubernetes flavor (Kind was used for this project)
 * kubectl
 * Istio
 * Node.Js
@@ -28,7 +28,7 @@ The application works by deploying a Gateway API (http only by default) that con
 ## Running
 
 First run the `Scripts/create.sh` script. It will: 
-* Create the minikube cluster.
+* Create the kind cluster.
 * Create the self signed certs.
 * Create and load the images to the local registry.
 * Deploy the base aplication without security mechanisms.

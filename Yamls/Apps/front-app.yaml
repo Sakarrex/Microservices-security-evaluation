@@ -33,9 +33,10 @@ spec:
                   - key: node-role.kubernetes.io/control-plane
                     operator: DoesNotExist
       containers:
+        #Note for kind to load and use the local image, set the tag different to latest or use PullPolicy IfNotPresent.
         - name: front
-          image: localhost:5000/front
-          imagePullPolicy: Always
+          image: front
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 3000

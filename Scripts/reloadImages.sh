@@ -1,15 +1,13 @@
 #!/bin/bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-echo "Loading Docker images into minikube registry..."
-kubectl port-forward -n kube-system service/registry 5000:80 & PID=$!
-docker build -t localhost:5000/front "$SCRIPT_DIR/../Docker-Images/front/"
-docker build -t localhost:5000/cpu-bench "$SCRIPT_DIR/../Docker-Images/cpu-bench/"
-docker build -t localhost:5000/mem-bench "$SCRIPT_DIR/../Docker-Images/mem-bench/"
-docker push localhost:5000/front
-docker push localhost:5000/cpu-bench
-docker push localhost:5000/mem-bench
-kill $PID
+echo "Loading Docker images into kind ..."
+docker build -t front "$SCRIPT_DIR/../Docker-Images/front/"
+docker build -t cpu-bench "$SCRIPT_DIR/../Docker-Images/cpu-bench/"
+docker build -t mem-bench "$SCRIPT_DIR/../Docker-Images/mem-bench/"
+kind load docker-image front
+kind load docker-image cpu-bench
+kind load docker-image mem-bench
 kubectl rollout restart deployment/front
 kubectl rollout restart deployment/cpu-bench
 kubectl rollout restart deployment/mem-bench 

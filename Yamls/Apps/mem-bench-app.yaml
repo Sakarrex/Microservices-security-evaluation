@@ -32,9 +32,10 @@ spec:
                   - key: node-role.kubernetes.io/control-plane
                     operator: DoesNotExist
       containers:
+        #Note for kind to load and use the local image, set the tag different to latest or use PullPolicy IfNotPresent.
         - name: mem-bench
-          image: localhost:5000/mem-bench
-          imagePullPolicy: Always
+          image: mem-bench
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 3000

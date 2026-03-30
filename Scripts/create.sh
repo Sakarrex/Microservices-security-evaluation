@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Create a multinode minikube cluster, set up certs, load images, and apply base yamls
+# Create a multinode kind cluster, set up certs, load images, and apply base yamls
 # Usage: ./create.sh
-# Dependencies: mkcert, minikube, kubectl, docker, istioctl
+# Dependencies: mkcert, kind, kind-cloud-provider, kubectl, docker, istioctl, 
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -19,16 +19,15 @@ setCerts() {
         --cert "$SCRIPT_DIR/../Certs/mydomain.com.pem"
 }
 
+
 loadImages(){
-    echo "Loading Docker images into minikube registry..."
-    kubectl port-forward -n kube-system service/registry 5000:80 & PID=$!
-    docker build -t localhost:5000/front "$SCRIPT_DIR/../Docker-Images/front/"
-    docker build -t localhost:5000/cpu-bench "$SCRIPT_DIR/../Docker-Images/cpu-bench/"
-    docker build -t localhost:5000/mem-bench "$SCRIPT_DIR/../Docker-Images/mem-bench/"
-    docker push localhost:5000/front
-    docker push localhost:5000/cpu-bench
-    docker push localhost:5000/mem-bench
-    kill $PID
+    echo "Loading Docker images into kind registry..."
+    docker build -t front "$SCRIPT_DIR/../Docker-Images/front/"
+    docker build -t cpu-bench "$SCRIPT_DIR/../Docker-Images/cpu-bench/"
+    docker build -t mem-bench "$SCRIPT_DIR/../Docker-Images/mem-bench/"
+    kind load docker-image front
+    kind load docker-image cpu-bench
+    kind load docker-image mem-bench
 }
 
 applyBase(){
@@ -44,7 +43,7 @@ applyBase(){
 setIstio(){
     echo "Setting up Istio..."
     #Minimal to avoid adding the ingress it comes by default
-    istioctl install --set profile=minimal --set values.global.platform=minikube --skip-confirmation 
+    istioctl install --set profile=minimal --skip-confirmation 
     kubectl label namespace default istio-injection=enabled
 }
 
@@ -55,8 +54,10 @@ applyGateways(){
     kubectl apply -f "$SCRIPT_DIR/../Yamls/Apps/gateway-http.yaml"
 }
 
+
 connectTunnel(){
-    minikube tunnel & PID_TUNNEL=$!
+    echo "Connecting kind cluster to host network using Cloud Provider KIND..."
+    cloud-provider-kind &
 
     echo "Waiting for gateway IP..."
     local INGRESS_HOST=""
@@ -74,43 +75,27 @@ connectTunnel(){
     echo "$INGRESS_HOST  mydomain.com" | sudo tee -a /etc/hosts
 }
 
-addmTLS(){
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/Mtls/enable-mtls-all.yaml"
-}
-
-addJwt(){
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/Jwt/jwt-all.yaml"
-}
-
-addWaf(){
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/Waf/waf-all.yaml"
-}
-
 setTelemetry(){
     echo "Setting up telemetry"
     kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/prometheus.yaml"
-    #kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/kiali.yaml"
+    kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/kiali.yaml"
     kubectl rollout status deployment/prometheus -n istio-system
     kubectl port-forward svc/prometheus -n istio-system 9090:9090 > /dev/null 2>&1 & PID_PROMETHEUS=$! 
-    #kubectl rollout status deployment/kiali -n istio-system
+    kubectl rollout status deployment/kiali -n istio-system
 }
 
 
-
+#CAMBIAR
 sudo -v
-minikube delete
-#CHECK
-#--memory=16384 
-minikube start --cpus 4 --nodes 3 --memory=3584 --addons registry
+kind delete cluster
+
+kind create cluster --config "$SCRIPT_DIR/../Yamls/cluster-config.yaml" 
 setCerts
 loadImages
 setIstio
 applyBase
-applyGateways
-connectTunnel
-#addmTLS
-#addWaf
-#addJwt
-setTelemetry
+#applyGateways
+#connectTunnel
+#setTelemetry
 
 echo "Cluster setup complete. You can access the application at http://mydomain.com"
