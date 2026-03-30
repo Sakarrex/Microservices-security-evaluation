@@ -22,9 +22,9 @@ setCerts() {
 
 loadImages(){
     echo "Loading Docker images into kind registry..."
-    docker build -t front "$SCRIPT_DIR/../Docker-Images/front/"
-    docker build -t cpu-bench "$SCRIPT_DIR/../Docker-Images/cpu-bench/"
-    docker build -t mem-bench "$SCRIPT_DIR/../Docker-Images/mem-bench/"
+    docker build -t front "$SCRIPT_DIR/../Docker-Images/front/" 
+    docker build -t cpu-bench "$SCRIPT_DIR/../Docker-Images/cpu-bench/" 
+    docker build -t mem-bench "$SCRIPT_DIR/../Docker-Images/mem-bench/" 
     kind load docker-image front
     kind load docker-image cpu-bench
     kind load docker-image mem-bench
@@ -57,7 +57,7 @@ applyGateways(){
 
 connectTunnel(){
     echo "Connecting kind cluster to host network using Cloud Provider KIND..."
-    cloud-provider-kind &
+    cloud-provider-kind &> /dev/null &
 
     echo "Waiting for gateway IP..."
     local INGRESS_HOST=""
@@ -94,8 +94,8 @@ setCerts
 loadImages
 setIstio
 applyBase
-#applyGateways
-#connectTunnel
+applyGateways
+connectTunnel
 #setTelemetry
 
 echo "Cluster setup complete. You can access the application at http://mydomain.com"

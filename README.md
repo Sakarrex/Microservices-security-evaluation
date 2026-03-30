@@ -38,4 +38,9 @@ First run the `Scripts/create.sh` script. It will:
 
 If everything worked you should be able to access the cluster through the url `http://mydomain.com`, and call the bench services: `http://mydomain.com/mem` (mem-bench), `http://mydomain.com/cpu` (cpu-bench), and `http://mydomain.com/run` (both).
 
-Once the create script has finish run `Scripts/runBenchmark.sh` to start the benchmarking test. A http load will with autocannon be generated from which prometheus metrics will be scraped, use the first parameter to set amount of runs to do (default 5). All results will ve written in the `Results/` folder.
+Once the create script has finish run `Scripts/runAllTests.sh` to start the benchmarking test. The `Scripts/runBenchmark.sh` is in charge of running one type of benchmark (Selecting one security protocol and one component to test it). It creates a http load with autocannon from which prometheus metrics will be scraped, the parameters it takes are: 
+* Protocol (Waf,Jwt,Mtls,Control)
+* Component (Gateway,Sidecar,All)
+* Number of runs (5 by default)
+
+All results will are written in the `Results/` folder.
