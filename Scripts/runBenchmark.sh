@@ -35,23 +35,23 @@ function getResults() {
 
     #CPU usages
     #CONTROL_PLANE
-    curl --data-urlencode "query=rate(container_cpu_usage_seconds_total{pod=~\"istiod.*\"}[${duration}s])" http://localhost:9090/api/v1/query > $base_route/Cpu/data_plane_cpu_results.json -s
+    curl --data-urlencode "query=rate(container_cpu_usage_seconds_total{pod=~\"istiod.*\",image=\"\"}[${duration}s])" http://localhost:9090/api/v1/query > $base_route/Cpu/data_plane_cpu_results.json -s
     #APPS
-    curl --data-urlencode "query=rate(container_cpu_usage_seconds_total{pod=~\"cpu-bench.*|mem-bench.*|front.*\"}[${duration}s])" http://localhost:9090/api/v1/query > $base_route/Cpu/app_cpu_results.json -s
+    curl --data-urlencode "query=rate(container_cpu_usage_seconds_total{pod=~\"cpu-bench.*|mem-bench.*|front.*\",image=\"\"}[${duration}s])" http://localhost:9090/api/v1/query > $base_route/Cpu/app_cpu_results.json -s
     #GATEWAY
-    curl --data-urlencode "query=rate(container_cpu_usage_seconds_total{pod=~\"app-gateway.*\"}[${duration}s])" http://localhost:9090/api/v1/query > $base_route/Cpu/gateway_cpu_results.json -s
+    curl --data-urlencode "query=rate(container_cpu_usage_seconds_total{pod=~\"app-gateway.*\",image=\"\"}[${duration}s])" http://localhost:9090/api/v1/query > $base_route/Cpu/gateway_cpu_results.json -s
     #TOTAL
-    curl --data-urlencode "query=sum(rate(container_cpu_usage_seconds_total{pod=~\"istiod.*|cpu-bench.*|mem-bench.*|front.*|app-gateway.*\"}[${duration}s]))" http://localhost:9090/api/v1/query > $base_route/Cpu/total_cpu_results.json -s
+    curl --data-urlencode "query=sum(rate(container_cpu_usage_seconds_total{pod=~\"istiod.*|cpu-bench.*|mem-bench.*|front.*|app-gateway.*\",image=\"\"}[${duration}s]))" http://localhost:9090/api/v1/query > $base_route/Cpu/total_cpu_results.json -s
 
     #Memory usages
     #CONTROL_PLANE
-    curl --data-urlencode "query=avg(avg_over_time(container_memory_working_set_bytes{pod=~\"istiod.*\"}[${duration}s]))" http://localhost:9090/api/v1/query > $base_route/Mem/data_plane_mem_results.json -s
+    curl --data-urlencode "query=avg(avg_over_time(container_memory_working_set_bytes{pod=~\"istiod.*\",image=\"\"}[${duration}s]))" http://localhost:9090/api/v1/query > $base_route/Mem/data_plane_mem_results.json -s
     #APPS
-    curl --data-urlencode "query=avg(avg_over_time(container_memory_working_set_bytes{pod=~\"cpu-bench.*|mem-bench.*|front.*\"}[${duration}s]))" http://localhost:9090/api/v1/query > $base_route/Mem/app_mem_results.json -s
+    curl --data-urlencode "query=avg(avg_over_time(container_memory_working_set_bytes{pod=~\"cpu-bench.*|mem-bench.*|front.*\",image=\"\"}[${duration}s]))" http://localhost:9090/api/v1/query > $base_route/Mem/app_mem_results.json -s
     #GATEWAY
-    curl --data-urlencode "query=avg(avg_over_time(container_memory_working_set_bytes{pod=~\"app-gateway.*\"}[${duration}s]))" http://localhost:9090/api/v1/query > $base_route/Mem/gateway_mem_results.json -s
+    curl --data-urlencode "query=avg(avg_over_time(container_memory_working_set_bytes{pod=~\"app-gateway.*\",image=\"\"}[${duration}s]))" http://localhost:9090/api/v1/query > $base_route/Mem/gateway_mem_results.json -s
     #TOTAL
-    curl --data-urlencode "query=sum(avg(avg_over_time(container_memory_working_set_bytes{pod=~\"app-gateway.*|cpu-bench.*|mem-bench.*|front.*|istiod.*\"}[${duration}s])))" http://localhost:9090/api/v1/query > $base_route/Mem/total_mem_results.json -s
+    curl --data-urlencode "query=sum(avg(avg_over_time(container_memory_working_set_bytes{pod=~\"app-gateway.*|cpu-bench.*|mem-bench.*|front.*|istiod.*\",image=\"\"}[${duration}s])))" http://localhost:9090/api/v1/query > $base_route/Mem/total_mem_results.json -s
 
     #curl --data-urlencode "query=max_over_time(container_memory_working_set_bytes{pod=~\"mem-bench.*|cpu-bench.*|front.*|app-gateway.*\"}[${duration}s])" http://localhost:9090/api/v1/query > mem-res.json -s
 

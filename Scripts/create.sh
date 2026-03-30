@@ -78,10 +78,10 @@ connectTunnel(){
 setTelemetry(){
     echo "Setting up telemetry"
     kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/prometheus.yaml"
-    kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/kiali.yaml"
+    #kubectl apply -f "$SCRIPT_DIR/../Yamls/Addons/kiali.yaml"
     kubectl rollout status deployment/prometheus -n istio-system
     kubectl port-forward svc/prometheus -n istio-system 9090:9090 > /dev/null 2>&1 & PID_PROMETHEUS=$! 
-    kubectl rollout status deployment/kiali -n istio-system
+    #kubectl rollout status deployment/kiali -n istio-system
 }
 
 
@@ -96,6 +96,6 @@ setIstio
 applyBase
 applyGateways
 connectTunnel
-#setTelemetry
+setTelemetry
 
 echo "Cluster setup complete. You can access the application at http://mydomain.com"
