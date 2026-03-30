@@ -85,10 +85,9 @@ setTelemetry(){
 }
 
 
-#CAMBIAR
+
 sudo -v
 kind delete cluster
-
 kind create cluster --config "$SCRIPT_DIR/../Yamls/cluster-config.yaml" 
 setCerts
 loadImages
