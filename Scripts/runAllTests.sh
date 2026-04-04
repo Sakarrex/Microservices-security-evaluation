@@ -8,7 +8,7 @@ stop_background_processes() {
 
 set_cluster(){
     echo "re/setting cluster"
-    /bin/bash $SCRIPT_DIR/create.sh > /dev/null
+    /bin/bash $SCRIPT_DIR/create.sh
 }
 
 sudo -v

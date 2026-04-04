@@ -68,11 +68,17 @@ connectTunnel(){
 
     echo "Gateway IP: $INGRESS_HOST"
 
-    if grep -q "mydomain.com" /etc/hosts; then
+    IP=$(grep "mydomain.com$" /etc/hosts)
+
+    if [[ -z $IP  ||  "$(echo $IP | cut -d' ' -f1)" != "$INGRESS_HOST" ]]; then
         sudo sed -i "/mydomain.com/d" /etc/hosts
+        echo "Adding $INGRESS_HOST to /etc/hosts for mydomain.com..."
+        echo "$INGRESS_HOST  mydomain.com" | sudo tee -a /etc/hosts
+    else
+        echo "Ip has already been assigned to mydomain.com"
     fi
-    echo "Adding $INGRESS_HOST to /etc/hosts for mydomain.com..."
-    echo "$INGRESS_HOST  mydomain.com" | sudo tee -a /etc/hosts
+
+
 }
 
 setTelemetry(){
@@ -86,7 +92,7 @@ setTelemetry(){
 
 
 
-sudo -v
+#sudo -v
 kind delete cluster
 kind create cluster --config "$SCRIPT_DIR/../Yamls/cluster-config.yaml" 
 setCerts
