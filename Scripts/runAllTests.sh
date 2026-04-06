@@ -33,22 +33,22 @@ set_cluster
 stop_background_processes
 set_cluster
 
-/bin/bash $SCRIPT_DIR/runBenchmark.sh Jwt All 20 > $SCRIPT_DIR/../Results/outputs/all_sidecar_output.txt 2>&1
+/bin/bash $SCRIPT_DIR/runBenchmark.sh Jwt All 20 > $SCRIPT_DIR/../Results/outputs/jwt_all_output.txt 2>&1
 
 stop_background_processes
 set_cluster
 
-/bin/bash $SCRIPT_DIR/runBenchmark.sh Mtls Gateway 20 > $SCRIPT_DIR/../Results/outputs/gateway_all_output.txt 2>&1
+/bin/bash $SCRIPT_DIR/runBenchmark.sh Mtls Gateway 20 > $SCRIPT_DIR/../Results/outputs/mtls_gateway_output.txt 2>&1
 
 stop_background_processes
 set_cluster
 
-/bin/bash $SCRIPT_DIR/runBenchmark.sh Mtls Sidecar 20 > $SCRIPT_DIR/../Results/outputs/sidecar_all_output.txt 2>&1
+/bin/bash $SCRIPT_DIR/runBenchmark.sh Mtls Sidecar 20 > $SCRIPT_DIR/../Results/outputs/mtls_sidecar_output.txt 2>&1
 
 stop_background_processes
 set_cluster
 
-/bin/bash $SCRIPT_DIR/runBenchmark.sh Mtls All 20 > $SCRIPT_DIR/../Results/outputs/jwt_all_output.txt 2>&1
+/bin/bash $SCRIPT_DIR/runBenchmark.sh Mtls All 20 > $SCRIPT_DIR/../Results/outputs/mtls_all_output.txt 2>&1
 
 stop_background_processes
 set_cluster
