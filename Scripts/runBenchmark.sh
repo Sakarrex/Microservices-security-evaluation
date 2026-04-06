@@ -166,15 +166,6 @@ case $PROTOCOL in
     Mtls)
         case $COMPONENT in
             Gateway)
-                echo "Starting benchmark run for Mtls in sidecars and gateway "
-
-                kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-all.yaml
-                sleep 15
-                getResults http 0
-                kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-all.yaml
-                ;;
-
-            Sidecar)
                 #Benchmark Mtls and https gateway only
                 echo "Starting benchmark run for Https gateway only..."
 
@@ -185,6 +176,15 @@ case $PROTOCOL in
                 sleep 15
                 getResults https 0
                 kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/disable-mtls-all.yaml
+                ;;
+
+            Sidecar)
+                echo "Starting benchmark run for Mtls in sidecars and gateway "
+
+                kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-all.yaml
+                sleep 15
+                getResults http 0
+                kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-all.yaml
                 ;;
 
             All)
