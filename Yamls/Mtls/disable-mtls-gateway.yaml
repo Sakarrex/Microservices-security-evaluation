@@ -1,7 +1,7 @@
 apiVersion: security.istio.io/v1
 kind: PeerAuthentication
 metadata:
-  name: gateway-mtls
+  name: disable-gateway-mtls
   namespace: default
 spec:
   selector:

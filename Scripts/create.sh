@@ -93,8 +93,15 @@ setTelemetry(){
 
 
 #sudo -v
+
 kind delete cluster
-kind create cluster --config "$SCRIPT_DIR/../Yamls/cluster-config.yaml" 
+kind create cluster --config "$SCRIPT_DIR/../Yamls/cluster-config.yaml"
+#For ambient mode to work
+for node in $(kind get nodes); do
+  docker exec $node sysctl fs.inotify.max_user_instances=512
+  docker exec $node sysctl fs.inotify.max_user_watches=524288
+done
+
 setCerts
 loadImages
 setIstio

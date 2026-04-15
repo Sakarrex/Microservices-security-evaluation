@@ -1,7 +1,7 @@
 apiVersion: extensions.istio.io/v1alpha1
 kind: WasmPlugin
 metadata:
-  name: coraza-waf
+  name: coraza-waf-all
   namespace: default
 spec:
   url: oci://ghcr.io/corazawaf/coraza-proxy-wasm:latest

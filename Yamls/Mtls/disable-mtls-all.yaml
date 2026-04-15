@@ -1,7 +1,7 @@
 apiVersion: security.istio.io/v1
 kind: PeerAuthentication
 metadata:
-  name: mtls-all
+  name: disable-mtls-all
   namespace: istio-system
 spec:
   mtls:

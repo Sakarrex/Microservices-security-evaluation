@@ -13,7 +13,7 @@ function getResults() {
     http_s=$1
     disable_mtls=$2
 
-    if [ $disable_mtls -eq 1 ]; then
+    if [[ -n "$disable_mtls" ]]; then
         #Forced disable Mtls, bc it comes enabled by default in istio
         kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/disable-mtls-all.yaml
         sleep 15
@@ -27,7 +27,8 @@ function getResults() {
     
     mkdir -p $base_route/Cpu/ $base_route/Mem/ > /dev/null
 
-    autocannon -c 100 -a 10000 -H "Authorization: Bearer $TOKEN" -j $http_s://mydomain.com/run  > $base_route/http_results.json 2>&1
+    autocannon -c 100 -a 10000 -H "Authorization: Bearer $TOKEN" -j $http_s://mydomain.com/run  > $base_route/http_results.json
+
     duration=$(jq -r '.duration' "$base_route/http_results.json" 2>/dev/null)
     duration=$(printf "%.0f" "$duration")
     echo "Benchmark of $PROTOCOL:$COMPONENT running for approximately $duration seconds"
@@ -68,7 +69,7 @@ function getResults() {
     i=$((i+1))
     done
 
-    if [ $disable_mtls -eq 1 ]; then
+    if [[ -n "$disable_mtls" ]]; then
         #Allow mtls back
         kubectl delete -f $SCRIPT_DIR/../Yamls/Mtls/disable-mtls-all.yaml
         sleep 15
@@ -83,7 +84,7 @@ case $PROTOCOL in
         COMPONENT=None
         #Benchmark Control
         echo "Starting benchmark run..."
-        getResults http 1
+        getResults http disable_mtls
         ;;
 
     Jwt)
@@ -94,7 +95,7 @@ case $PROTOCOL in
 
                 kubectl apply -f $SCRIPT_DIR/../Yamls/Jwt/jwt-gateway.yaml
                 sleep 15
-                getResults http 1
+                getResults http disable_mtls
                 kubectl delete -f $SCRIPT_DIR/../Yamls/Jwt/jwt-gateway.yaml
                 ;;
 
@@ -104,7 +105,7 @@ case $PROTOCOL in
 
                 kubectl apply -f $SCRIPT_DIR/../Yamls/Jwt/jwt-apps.yaml
                 sleep 15
-                getResults http 1
+                getResults http disable_mtls
                 kubectl delete -f $SCRIPT_DIR/../Yamls/Jwt/jwt-apps.yaml
                 ;;
 
@@ -114,7 +115,7 @@ case $PROTOCOL in
 
                 kubectl apply -f $SCRIPT_DIR/../Yamls/Jwt/jwt-all.yaml
                 sleep 15
-                getResults http 1
+                getResults http disable_mtls
                 kubectl delete -f $SCRIPT_DIR/../Yamls/Jwt/jwt-all.yaml
                 ;;
 
@@ -133,7 +134,7 @@ case $PROTOCOL in
                 
                 kubectl apply -f $SCRIPT_DIR/../Yamls/Waf/waf-gateway.yaml
                 sleep 15
-                getResults http 1
+                getResults http disable_mtls
                 kubectl delete -f $SCRIPT_DIR/../Yamls/Waf/waf-gateway.yaml
                 ;;
 
@@ -143,7 +144,7 @@ case $PROTOCOL in
 
                 kubectl apply -f $SCRIPT_DIR/../Yamls/Waf/waf-apps.yaml
                 sleep 15
-                getResults http 1
+                getResults http disable_mtls
                 kubectl delete -f $SCRIPT_DIR/../Yamls/Waf/waf-apps.yaml
                 ;;
 
@@ -153,7 +154,7 @@ case $PROTOCOL in
 
                 kubectl apply -f $SCRIPT_DIR/../Yamls/Waf/waf-all.yaml
                 sleep 15
-                getResults http 1
+                getResults http disable_mtls
                 kubectl delete -f $SCRIPT_DIR/../Yamls/Waf/waf-all.yaml
                 ;;
             
@@ -192,6 +193,7 @@ case $PROTOCOL in
                 echo "Starting benchmark run for Https and Mtls in sidecars and gateway..."
 
                 kubectl apply -f $SCRIPT_DIR/../Yamls/Mtls/enable-mtls-all.yaml
+                kubectl apply -f $SCRIPT_DIR/../Yamls/Apps/gateway-https.yaml
                 sleep 15
                 getResults https 0
                 kubectl apply -f $SCRIPT_DIR/../Yamls/Apps/gateway-http.yaml

@@ -1,10 +1,14 @@
+from cProfile import label
+
+from matplotlib import ticker
 import numpy as np
 import matplotlib.pyplot as plt
 from statistics import mean
 import json
 from pathlib import Path
 import re
-
+#Change to ambient or minimal when needed
+resultsfolder = Path("Results-minimal/results")
 
 if __name__ == '__main__':
     plt.style.use('_mpl-gallery')
@@ -13,7 +17,7 @@ if __name__ == '__main__':
                     'Cpu': [], 
                     'Mem': []}}}
 
-    for run_folder in Path("results/Control").iterdir():
+    for run_folder in Path(f'{resultsfolder}/Control').iterdir():
         
         with open(Path(f'{run_folder.parent}/{run_folder.name}/None/http_results.json'), 'r') as file:
                 data= json.load(file) 
@@ -53,42 +57,54 @@ if __name__ == '__main__':
             for e in evaluation_name:
                 mechanisms_results[m][c][e] = []
         
-        for run_folder in Path(f'results/{m}').iterdir():
+        for run_folder in Path(f'{resultsfolder}/{m}').iterdir():
             
             for component_folder in Path(run_folder).iterdir():
                 
                 with open(Path(f'{component_folder}/http_results.json'), 'r') as file:
-                    data = json.load(file)
-                    mechanisms_results[m][component_folder.name]['Duration'].append(data['duration'])
+                    try:
+                        data = json.load(file)
+                        mechanisms_results[m][component_folder.name]['Duration'].append(data['duration'])
+                    except (KeyError, json.JSONDecodeError) as e:
+                        print(f"Error occurred while processing {component_folder}/http_results.json for mechanism {m}. Error: {e}")
                 
                 with open(Path(f'{component_folder}/Cpu/cpu_throttling.json'), 'r') as file:
                     data = json.load(file)
-                    results = data['data']['result']
-                    for result in results:
-                        if re.search("cpu-bench.*|mem-bench.*|front.*|app-gateway.*",result['metric']['pod']):
-                            throttle_mechanisms[m]['apps'].append(result['value'][1][:4])
-                        elif re.search("kindnet.*",result['metric']['pod']):
-                            throttle_mechanisms[m]['cni'].append(result['value'][1][:4])
+                    try:
+                        results = data['data']['result']
+                        for result in results:
+                            if re.search("cpu-bench.*|mem-bench.*|front.*|app-gateway.*",result['metric']['pod']):
+                                throttle_mechanisms[m]['apps'].append(result['value'][1][:4])
+                            elif re.search("kindnet.*",result['metric']['pod']):
+                                throttle_mechanisms[m]['cni'].append(result['value'][1][:4])
+                    except KeyError as e:
+                        print(f"Error occurred while processing {component_folder}/Cpu/cpu_throttling.json for mechanism {m}. Error: {e}")
 
                 with open(Path(f'{component_folder}/Cpu/total_cpu_results.json'), 'r') as file:
                     data = json.load(file)
                     try:
                         mechanisms_results[m][component_folder.name]['Cpu'].append(float(data['data']['result'][0]['value'][1]))
-                    except (KeyError, IndexError):
-                        print(f"Error occurred while processing {component_folder}.")
+                    except (KeyError, IndexError) as e:
+                        print(f"Error occurred while processing {component_folder}/Cpu/total_cpu_results.json for mechanism {m}. Error: {e}")
 
                 with open(Path(f'{component_folder}/Mem/total_mem_results.json'), 'r') as file:
                     data = json.load(file)
                     try:
                         mechanisms_results[m][component_folder.name]['Mem'].append(float(data['data']['result'][0]['value'][1]))
-                    except (KeyError, IndexError):
-                        print(f"Error occurred while processing {component_folder}.")
+                    except (KeyError, IndexError) as e:
+                        print(f"Error occurred while processing {component_folder}/Mem/total_mem_results.json for mechanism {m}. Error: {e}")
 
     # print(control_results)
     # for m in mechanisms_name:
     #     print(f"Throttle values {m}: {throttle_mechanisms[m]}")
     # print(throttle_control)
-    # print(mechanisms_results)
+    #print(mechanisms_results)
+    # for m in mechanisms_name:
+    #     for c in components_name:
+    #         for e in evaluation_name:
+    #             if len(mechanisms_results[m][c][e]) != 20:
+    #                 print(f"Missing data for {m} - {c} - {e}, length: {len(mechanisms_results[m][c][e])}")
+        
 
     bar_width = 0.25
 
@@ -106,6 +122,10 @@ if __name__ == '__main__':
         y_values_Jwt=[mean(mechanisms_results['Jwt'][i][eval_name]) for i in mechanisms_results['Jwt']]
         y_values_Mtls=[mean(mechanisms_results['Mtls'][i][eval_name]) for i in mechanisms_results['Mtls']]
         y_values_Waf=[mean(mechanisms_results['Waf'][i][eval_name]) for i in mechanisms_results['Waf']]
+        # print(f"Control {eval_name}: {y_value_control}")
+        # print(f"Jwt {eval_name}: {y_values_Jwt}")
+        # print(f"Mtls {eval_name}: {y_values_Mtls}")
+        # print(f"Waf {eval_name}: {y_values_Waf}")
 
         plt.bar(x_pos_Control,y_value_control, bar_width, color="#110226",edgecolor="white", linewidth=0.7)
         plt.bar(x_pos_Jwt, y_values_Jwt, bar_width,color="#104f6e", edgecolor="white", linewidth=0.7)
@@ -116,9 +136,19 @@ if __name__ == '__main__':
         plt.ylabel(label)
         plt.xticks( [-0.5] + [value+bar_width for value in range(len(y_values_Jwt))], ["Control"] + components_name) 
         plt.legend(["Control","Jwt","Mtls","Waf"])
+
+        # Format y-axis for memory usage
+        #--------------------------------------------------------------------------------------------------
+        if 'b)' in label:
+            ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x/1e6:.0f}'))
+            plt.ylabel('Avg usage (MB)')
+        else:
+            plt.ylabel(label)
+        #--------------------------------------------------------------------------------------------------
+
         plt.tight_layout()
         plt.show()
-
-    labels=['Avg duration (s)','Rate (s)','Avg usage (b)']
+        
+    labels=['Avg duration (s)','Avg Nuclei','Avg usage per pod(b)']
     for i in range(len(labels)):
         drawPlot(evaluation_name[i],labels[i])
