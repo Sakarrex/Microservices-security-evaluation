@@ -5,6 +5,7 @@
 # Dependencies: mkcert, kind, kind-cloud-provider, kubectl, docker, istioctl, 
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ISTIO_MODE="${1:-minimal}" #select istio setup, minimal by default
 
 setCerts() {
     echo "Setting up TLS certificates..."
@@ -42,8 +43,8 @@ applyBase(){
 
 setIstio(){
     echo "Setting up Istio..."
-    #Minimal to avoid adding the ingress it comes by default
-    istioctl install --set profile=minimal --skip-confirmation 
+    #Minimal is to avoid adding the ingress that comes by default
+    istioctl install --set profile=$ISTIO_MODE --skip-confirmation 
     kubectl label namespace default istio-injection=enabled
 }
 
@@ -93,7 +94,6 @@ setTelemetry(){
 
 
 #sudo -v
-
 kind delete cluster
 kind create cluster --config "$SCRIPT_DIR/../Yamls/cluster-config.yaml"
 #For ambient mode to work
@@ -102,12 +102,12 @@ for node in $(kind get nodes); do
   docker exec $node sysctl fs.inotify.max_user_watches=524288
 done
 
-setCerts
-loadImages
-setIstio
-applyBase
-applyGateways
-connectTunnel
-setTelemetry
+# setCerts
+# loadImages
+# setIstio
+# applyBase
+# applyGateways
+# connectTunnel
+# setTelemetry
 
 echo "Cluster setup complete. You can access the application at http://mydomain.com"

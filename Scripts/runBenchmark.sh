@@ -8,6 +8,7 @@ PROTOCOL="$(echo "${PROTOCOL_INPUT,,}" | awk '{print toupper(substr($0,1,1)) tol
 COMPONENT="$(echo "${COMPONENT_INPUT,,}" | awk '{print toupper(substr($0,1,1)) tolower(substr($0,2))}')"
 
 RUN_AMOUNT="${3:-5}" # Default to 5 runs if not specified
+ISTIO_MODE="${4:-minimal}" #istio setup, minimal by default
 
 function getResults() {
     http_s=$1
@@ -23,7 +24,7 @@ function getResults() {
     while [ $i -lt $(($RUN_AMOUNT + 1)) ]; do
     echo "Beginning run $i"
 
-    base_route="$SCRIPT_DIR/../Results/$PROTOCOL/Run_$i/$COMPONENT"
+    base_route="$SCRIPT_DIR/../Results/$ISTIO_MODE/data/$PROTOCOL/Run_$i/$COMPONENT"
     
     mkdir -p $base_route/Cpu/ $base_route/Mem/ > /dev/null
 

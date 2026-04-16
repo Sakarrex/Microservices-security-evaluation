@@ -1,6 +1,6 @@
 #!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
+ISTIO_MODE="${1:-minimal,,}" #select istio setup, minimal by default
 stop_background_processes() {
     echo "Stopping Prometheus port-forward..."
     pkill -f "kubectl port-forward svc/prometheus" 2>/dev/null || true
@@ -8,59 +8,26 @@ stop_background_processes() {
 
 set_cluster(){
     echo "re/setting cluster"
-    /bin/bash $SCRIPT_DIR/create.sh
+    /bin/bash $SCRIPT_DIR/create.sh $ISTIO_MODE 
 }
 
 sudo -v
+output_dir="$SCRIPT_DIR/../Results/$ISTIO_MODE/outputs"
+mkdir -p "$output_dir"
 
+Mechanism_list=("Jwt" "Mtls" "Waf")
+Component_list=("Gateway" "Sidecar" "All")
 
-mkdir -p $SCRIPT_DIR/../Results/outputs
-
+#Control benchmark to have a baseline to compare with, without any security mechanism enabled, but with the overhead of istio in place
 set_cluster
-
-/bin/bash $SCRIPT_DIR/runBenchmark.sh Control a 20 > $SCRIPT_DIR/../Results/outputs/control_output.txt 2>&1
-
+/bin/bash $SCRIPT_DIR/runBenchmark.sh Control a 20 > $output_dir/control_output.txt 2>&1
 stop_background_processes
-set_cluster
 
-/bin/bash $SCRIPT_DIR/runBenchmark.sh Jwt Gateway 20 > $SCRIPT_DIR/../Results/outputs/jwt_gateway_output.txt 2>&1
-
-stop_background_processes
-set_cluster
-
-/bin/bash $SCRIPT_DIR/runBenchmark.sh Jwt Sidecar 20 > $SCRIPT_DIR/../Results/outputs/jwt_sidecar_output.txt 2>&1
-
-stop_background_processes
-set_cluster
-
-/bin/bash $SCRIPT_DIR/runBenchmark.sh Jwt All 20 > $SCRIPT_DIR/../Results/outputs/jwt_all_output.txt 2>&1
-
-stop_background_processes
-set_cluster
-
-/bin/bash $SCRIPT_DIR/runBenchmark.sh Mtls Gateway 20 > $SCRIPT_DIR/../Results/outputs/mtls_gateway_output.txt 2>&1
-
-stop_background_processes
-set_cluster
-
-/bin/bash $SCRIPT_DIR/runBenchmark.sh Mtls Sidecar 20 > $SCRIPT_DIR/../Results/outputs/mtls_sidecar_output.txt 2>&1
-
-stop_background_processes
-set_cluster
-
-/bin/bash $SCRIPT_DIR/runBenchmark.sh Mtls All 20 > $SCRIPT_DIR/../Results/outputs/mtls_all_output.txt 2>&1
-
-stop_background_processes
-set_cluster
-
-/bin/bash $SCRIPT_DIR/runBenchmark.sh Waf Gateway 20 > $SCRIPT_DIR/../Results/outputs/waf_gateway_output.txt 2>&1
-
-stop_background_processes
-set_cluster
-
-/bin/bash $SCRIPT_DIR/runBenchmark.sh Waf Sidecar 20 > $SCRIPT_DIR/../Results/outputs/waf_sidecar_output.txt 2>&1
-
-stop_background_processes
-set_cluster
-
-/bin/bash $SCRIPT_DIR/runBenchmark.sh Waf All 20 > $SCRIPT_DIR/../Results/outputs/waf_all_output.txt 2>&1
+for mechanism in "${Mechanism_list[@]}"; do
+    for component in "${Component_list[@]}"; do
+        echo "Running benchmark for $mechanism on $component..."
+        set_cluster
+        /bin/bash $SCRIPT_DIR/runBenchmark.sh $mechanism $component 20 $ISTIO_MODE > "$output_dir/${mechanism,,}_${component,,}_output.txt" 2>&1
+        stop_background_processes
+    done
+done

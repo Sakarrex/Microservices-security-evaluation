@@ -1,5 +1,3 @@
-from cProfile import label
-
 from matplotlib import ticker
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,8 +5,12 @@ from statistics import mean
 import json
 from pathlib import Path
 import re
-#Change to ambient or minimal when needed
-resultsfolder = Path("Results-minimal/results")
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--resultsfolder', default="minimal", help='Minimal or ambient mode results folder')
+args = parser.parse_args()
+resultsfolder = Path(f'Results/{args.resultsfolder}/data')
 
 if __name__ == '__main__':
     plt.style.use('_mpl-gallery')
