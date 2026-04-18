@@ -6,7 +6,7 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ISTIO_MODE="${1:-minimal}" #select istio setup, minimal by default
-
+ISTIO_MODE="${ISTIO_MODE,,}"
 setCerts() {
     echo "Setting up TLS certificates..."
     if [ ! -e "$SCRIPT_DIR/../Certs/mydomain.com.pem" ] || [ ! -e "$SCRIPT_DIR/../Certs/mydomain.com-key.pem" ]; then

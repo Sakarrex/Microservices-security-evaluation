@@ -9,6 +9,7 @@ COMPONENT="$(echo "${COMPONENT_INPUT,,}" | awk '{print toupper(substr($0,1,1)) t
 
 RUN_AMOUNT="${3:-5}" # Default to 5 runs if not specified
 ISTIO_MODE="${4:-minimal}" #istio setup, minimal by default
+ISTIO_MODE="${ISTIO_MODE,,}"
 
 function getResults() {
     http_s=$1
