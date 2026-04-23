@@ -5,6 +5,8 @@ ISTIO_MODE="${ISTIO_MODE,,}"
 stop_background_processes() {
     echo "Stopping Prometheus port-forward..."  
     pkill -f "kubectl port-forward svc/prometheus" 2>/dev/null || true
+    echo "Killing orphaned cloud-provider-kind processes..."
+    sudo killall cloud-provider-kind 2>/dev/null || true
 }
 
 set_cluster(){
