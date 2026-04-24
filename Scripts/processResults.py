@@ -136,7 +136,8 @@ if __name__ == '__main__':
         plt.title(eval_name)
         plt.xlabel('Component')
         plt.ylabel(label)
-        plt.xticks( [-0.5] + [value+bar_width for value in range(len(y_values_Jwt))], ["Control"] + components_name) 
+        display_names = [name if name != 'All' else 'Gateway + Sidecar' for name in components_name]
+        plt.xticks( [-0.5] + [value+bar_width for value in range(len(y_values_Jwt))], ["Control"] + display_names) 
         plt.legend(["Control","Jwt","Mtls","Waf"])
 
         # Format y-axis for memory usage
