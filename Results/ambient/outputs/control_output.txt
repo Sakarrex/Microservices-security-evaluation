@@ -1,0 +1,43 @@
+Starting benchmark run...
+peerauthentication.security.istio.io/disable-mtls-all created
+Beginning run 1
+Benchmark of Control:None running for approximately 93 seconds
+Beginning run 2
+Benchmark of Control:None running for approximately 90 seconds
+Beginning run 3
+Benchmark of Control:None running for approximately 91 seconds
+Beginning run 4
+Benchmark of Control:None running for approximately 91 seconds
+Beginning run 5
+Benchmark of Control:None running for approximately 92 seconds
+Beginning run 6
+Benchmark of Control:None running for approximately 91 seconds
+Beginning run 7
+Benchmark of Control:None running for approximately 92 seconds
+Beginning run 8
+Benchmark of Control:None running for approximately 91 seconds
+Beginning run 9
+Benchmark of Control:None running for approximately 92 seconds
+Beginning run 10
+Benchmark of Control:None running for approximately 92 seconds
+Beginning run 11
+Benchmark of Control:None running for approximately 91 seconds
+Beginning run 12
+Benchmark of Control:None running for approximately 91 seconds
+Beginning run 13
+Benchmark of Control:None running for approximately 91 seconds
+Beginning run 14
+Benchmark of Control:None running for approximately 91 seconds
+Beginning run 15
+Benchmark of Control:None running for approximately 91 seconds
+Beginning run 16
+Benchmark of Control:None running for approximately 92 seconds
+Beginning run 17
+Benchmark of Control:None running for approximately 91 seconds
+Beginning run 18
+Benchmark of Control:None running for approximately 90 seconds
+Beginning run 19
+Benchmark of Control:None running for approximately 92 seconds
+Beginning run 20
+Benchmark of Control:None running for approximately 91 seconds
+peerauthentication.security.istio.io "disable-mtls-all" deleted from istio-system namespace

@@ -21,7 +21,7 @@ mkdir -p "$output_dir"
 Mechanism_list=("Jwt" "Mtls" "Waf")
 Component_list=("Gateway" "Sidecar" "All")
 
-#Control benchmark to have a baseline to compare with, without any security mechanism enabled, but with the overhead of istio in place
+Control benchmark to have a baseline to compare with, without any security mechanism enabled, but with the overhead of istio in place
 set_cluster
 /bin/bash $SCRIPT_DIR/runBenchmark.sh Control a 20 $ISTIO_MODE > $output_dir/control_output.txt 2>&1
 stop_background_processes
