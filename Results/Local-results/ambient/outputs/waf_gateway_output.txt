@@ -1,0 +1,45 @@
+Starting benchmark run for Waf in gateway only...
+wasmplugin.extensions.istio.io/coraza-waf-gateway created
+peerauthentication.security.istio.io/disable-mtls-all created
+Beginning run 1
+Benchmark of Waf:Gateway running for approximately 165 seconds
+Beginning run 2
+Benchmark of Waf:Gateway running for approximately 161 seconds
+Beginning run 3
+Benchmark of Waf:Gateway running for approximately 158 seconds
+Beginning run 4
+Benchmark of Waf:Gateway running for approximately 160 seconds
+Beginning run 5
+Benchmark of Waf:Gateway running for approximately 160 seconds
+Beginning run 6
+Benchmark of Waf:Gateway running for approximately 165 seconds
+Beginning run 7
+Benchmark of Waf:Gateway running for approximately 157 seconds
+Beginning run 8
+Benchmark of Waf:Gateway running for approximately 158 seconds
+Beginning run 9
+Benchmark of Waf:Gateway running for approximately 167 seconds
+Beginning run 10
+Benchmark of Waf:Gateway running for approximately 161 seconds
+Beginning run 11
+Benchmark of Waf:Gateway running for approximately 161 seconds
+Beginning run 12
+Benchmark of Waf:Gateway running for approximately 160 seconds
+Beginning run 13
+Benchmark of Waf:Gateway running for approximately 161 seconds
+Beginning run 14
+Benchmark of Waf:Gateway running for approximately 161 seconds
+Beginning run 15
+Benchmark of Waf:Gateway running for approximately 161 seconds
+Beginning run 16
+Benchmark of Waf:Gateway running for approximately 161 seconds
+Beginning run 17
+Benchmark of Waf:Gateway running for approximately 162 seconds
+Beginning run 18
+Benchmark of Waf:Gateway running for approximately 159 seconds
+Beginning run 19
+Benchmark of Waf:Gateway running for approximately 161 seconds
+Beginning run 20
+Benchmark of Waf:Gateway running for approximately 161 seconds
+peerauthentication.security.istio.io "disable-mtls-all" deleted from istio-system namespace
+wasmplugin.extensions.istio.io "coraza-waf-gateway" deleted from default namespace

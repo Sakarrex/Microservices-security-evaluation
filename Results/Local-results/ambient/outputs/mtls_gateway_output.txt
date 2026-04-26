@@ -1,0 +1,54 @@
+Starting benchmark run for Https gateway only...
+peerauthentication.security.istio.io/disable-mtls-all created
+gateway.gateway.networking.k8s.io/app-gateway configured
+httproute.gateway.networking.k8s.io/http-redirect created
+httproute.gateway.networking.k8s.io/app-route configured
+deployment.apps/app-gateway-istio restarted
+Waiting for deployment spec update to be observed...
+Waiting for deployment "app-gateway-istio" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "app-gateway-istio" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "app-gateway-istio" rollout to finish: 1 old replicas are pending termination...
+deployment "app-gateway-istio" successfully rolled out
+peerauthentication.security.istio.io/disable-mtls-all unchanged
+Beginning run 1
+Benchmark of Mtls:Gateway running for approximately 156 seconds
+Beginning run 2
+Benchmark of Mtls:Gateway running for approximately 151 seconds
+Beginning run 3
+Benchmark of Mtls:Gateway running for approximately 153 seconds
+Beginning run 4
+Benchmark of Mtls:Gateway running for approximately 178 seconds
+Beginning run 5
+Benchmark of Mtls:Gateway running for approximately 154 seconds
+Beginning run 6
+Benchmark of Mtls:Gateway running for approximately 151 seconds
+Beginning run 7
+Benchmark of Mtls:Gateway running for approximately 152 seconds
+Beginning run 8
+Benchmark of Mtls:Gateway running for approximately 152 seconds
+Beginning run 9
+Benchmark of Mtls:Gateway running for approximately 151 seconds
+Beginning run 10
+Benchmark of Mtls:Gateway running for approximately 151 seconds
+Beginning run 11
+Benchmark of Mtls:Gateway running for approximately 153 seconds
+Beginning run 12
+Benchmark of Mtls:Gateway running for approximately 152 seconds
+Beginning run 13
+Benchmark of Mtls:Gateway running for approximately 152 seconds
+Beginning run 14
+Benchmark of Mtls:Gateway running for approximately 149 seconds
+Beginning run 15
+Benchmark of Mtls:Gateway running for approximately 150 seconds
+Beginning run 16
+Benchmark of Mtls:Gateway running for approximately 151 seconds
+Beginning run 17
+Benchmark of Mtls:Gateway running for approximately 151 seconds
+Beginning run 18
+Benchmark of Mtls:Gateway running for approximately 150 seconds
+Beginning run 19
+Benchmark of Mtls:Gateway running for approximately 149 seconds
+Beginning run 20
+Benchmark of Mtls:Gateway running for approximately 151 seconds
+peerauthentication.security.istio.io "disable-mtls-all" deleted from istio-system namespace
+Error from server (NotFound): error when deleting "/home/micros/Desktop/Microservices-security-evaluation/Scripts/../Yamls/Mtls/disable-mtls-all.yaml": peerauthentications.security.istio.io "disable-mtls-all" not found

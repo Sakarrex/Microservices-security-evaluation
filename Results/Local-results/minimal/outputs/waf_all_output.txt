@@ -1,0 +1,48 @@
+Starting benchmark run for Waf in sidecars and gateway...
+wasmplugin.extensions.istio.io/coraza-waf-all created
+peerauthentication.security.istio.io/disable-mtls-all created
+Beginning run 1
+(node:3832548) TimeoutNegativeWarning: -2 is a negative number.
+Timeout duration was set to 1.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Benchmark of Waf:All running for approximately 269 seconds
+Beginning run 2
+Benchmark of Waf:All running for approximately 251 seconds
+Beginning run 3
+Benchmark of Waf:All running for approximately 252 seconds
+Beginning run 4
+Benchmark of Waf:All running for approximately 247 seconds
+Beginning run 5
+Benchmark of Waf:All running for approximately 248 seconds
+Beginning run 6
+Benchmark of Waf:All running for approximately 251 seconds
+Beginning run 7
+Benchmark of Waf:All running for approximately 256 seconds
+Beginning run 8
+Benchmark of Waf:All running for approximately 250 seconds
+Beginning run 9
+Benchmark of Waf:All running for approximately 247 seconds
+Beginning run 10
+Benchmark of Waf:All running for approximately 248 seconds
+Beginning run 11
+Benchmark of Waf:All running for approximately 248 seconds
+Beginning run 12
+Benchmark of Waf:All running for approximately 251 seconds
+Beginning run 13
+Benchmark of Waf:All running for approximately 250 seconds
+Beginning run 14
+Benchmark of Waf:All running for approximately 251 seconds
+Beginning run 15
+Benchmark of Waf:All running for approximately 249 seconds
+Beginning run 16
+Benchmark of Waf:All running for approximately 249 seconds
+Beginning run 17
+Benchmark of Waf:All running for approximately 249 seconds
+Beginning run 18
+Benchmark of Waf:All running for approximately 249 seconds
+Beginning run 19
+Benchmark of Waf:All running for approximately 249 seconds
+Beginning run 20
+Benchmark of Waf:All running for approximately 252 seconds
+peerauthentication.security.istio.io "disable-mtls-all" deleted from istio-system namespace
+wasmplugin.extensions.istio.io "coraza-waf-all" deleted from default namespace

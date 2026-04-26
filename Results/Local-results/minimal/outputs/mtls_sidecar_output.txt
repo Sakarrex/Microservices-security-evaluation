@@ -1,0 +1,45 @@
+Starting benchmark run for Mtls in sidecars and gateway 
+peerauthentication.security.istio.io/enable-mtls-all created
+peerauthentication.security.istio.io/disable-mtls-all created
+Beginning run 1
+Benchmark of Mtls:Sidecar running for approximately 162 seconds
+Beginning run 2
+Benchmark of Mtls:Sidecar running for approximately 156 seconds
+Beginning run 3
+Benchmark of Mtls:Sidecar running for approximately 155 seconds
+Beginning run 4
+Benchmark of Mtls:Sidecar running for approximately 156 seconds
+Beginning run 5
+Benchmark of Mtls:Sidecar running for approximately 156 seconds
+Beginning run 6
+Benchmark of Mtls:Sidecar running for approximately 156 seconds
+Beginning run 7
+Benchmark of Mtls:Sidecar running for approximately 156 seconds
+Beginning run 8
+Benchmark of Mtls:Sidecar running for approximately 153 seconds
+Beginning run 9
+Benchmark of Mtls:Sidecar running for approximately 154 seconds
+Beginning run 10
+Benchmark of Mtls:Sidecar running for approximately 155 seconds
+Beginning run 11
+Benchmark of Mtls:Sidecar running for approximately 156 seconds
+Beginning run 12
+Benchmark of Mtls:Sidecar running for approximately 155 seconds
+Beginning run 13
+Benchmark of Mtls:Sidecar running for approximately 150 seconds
+Beginning run 14
+Benchmark of Mtls:Sidecar running for approximately 153 seconds
+Beginning run 15
+Benchmark of Mtls:Sidecar running for approximately 177 seconds
+Beginning run 16
+Benchmark of Mtls:Sidecar running for approximately 174 seconds
+Beginning run 17
+Benchmark of Mtls:Sidecar running for approximately 154 seconds
+Beginning run 18
+Benchmark of Mtls:Sidecar running for approximately 154 seconds
+Beginning run 19
+Benchmark of Mtls:Sidecar running for approximately 155 seconds
+Beginning run 20
+Benchmark of Mtls:Sidecar running for approximately 155 seconds
+peerauthentication.security.istio.io "disable-mtls-all" deleted from istio-system namespace
+peerauthentication.security.istio.io "enable-mtls-all" deleted from istio-system namespace

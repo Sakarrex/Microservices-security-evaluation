@@ -1,0 +1,49 @@
+Starting benchmark run for Waf in sidecar only...
+wasmplugin.extensions.istio.io/coraza-waf-front created
+wasmplugin.extensions.istio.io/coraza-waf-cpu-bench created
+wasmplugin.extensions.istio.io/coraza-waf-mem-bench created
+peerauthentication.security.istio.io/disable-mtls-all created
+Beginning run 1
+Benchmark of Waf:Sidecar running for approximately 248 seconds
+Beginning run 2
+Benchmark of Waf:Sidecar running for approximately 236 seconds
+Beginning run 3
+Benchmark of Waf:Sidecar running for approximately 233 seconds
+Beginning run 4
+Benchmark of Waf:Sidecar running for approximately 234 seconds
+Beginning run 5
+Benchmark of Waf:Sidecar running for approximately 233 seconds
+Beginning run 6
+Benchmark of Waf:Sidecar running for approximately 233 seconds
+Beginning run 7
+Benchmark of Waf:Sidecar running for approximately 235 seconds
+Beginning run 8
+Benchmark of Waf:Sidecar running for approximately 235 seconds
+Beginning run 9
+Benchmark of Waf:Sidecar running for approximately 232 seconds
+Beginning run 10
+Benchmark of Waf:Sidecar running for approximately 233 seconds
+Beginning run 11
+Benchmark of Waf:Sidecar running for approximately 235 seconds
+Beginning run 12
+Benchmark of Waf:Sidecar running for approximately 236 seconds
+Beginning run 13
+Benchmark of Waf:Sidecar running for approximately 233 seconds
+Beginning run 14
+Benchmark of Waf:Sidecar running for approximately 235 seconds
+Beginning run 15
+Benchmark of Waf:Sidecar running for approximately 237 seconds
+Beginning run 16
+Benchmark of Waf:Sidecar running for approximately 238 seconds
+Beginning run 17
+Benchmark of Waf:Sidecar running for approximately 237 seconds
+Beginning run 18
+Benchmark of Waf:Sidecar running for approximately 237 seconds
+Beginning run 19
+Benchmark of Waf:Sidecar running for approximately 233 seconds
+Beginning run 20
+Benchmark of Waf:Sidecar running for approximately 233 seconds
+peerauthentication.security.istio.io "disable-mtls-all" deleted from istio-system namespace
+wasmplugin.extensions.istio.io "coraza-waf-front" deleted from default namespace
+wasmplugin.extensions.istio.io "coraza-waf-cpu-bench" deleted from default namespace
+wasmplugin.extensions.istio.io "coraza-waf-mem-bench" deleted from default namespace
